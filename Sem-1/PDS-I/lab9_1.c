@@ -1,6 +1,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define TIPO_VETOR double
+
+int inicializaVetor (TIPO_VETOR** vet) {
+    int tamanho;
+
+    scanf("%d", &tamanho);
+    *vet = (TIPO_VETOR *) malloc(sizeof(TIPO_VETOR) * tamanho);
+
+    for (int i = 0; i < tamanho; i++) {
+        scanf("%lf", &( (*vet)[i] ));
+    }
+
+    return tamanho;
+}
+
 void media (double *vet, int n, int *i) {
     int soma = 0, indiceMaisProximo = 0, menorDiferenca = 2147483647, media;
 
@@ -21,19 +36,6 @@ void media (double *vet, int n, int *i) {
 
     printf("%d", indiceMaisProximo);
     *i = indiceMaisProximo;
-}
-
-int inicializaVetor (double** vet) {
-    int tamanho;
-
-    scanf("%d", &tamanho);
-    *vet = (double *) malloc(sizeof(double) * tamanho);
-
-    for (int i = 0; i < tamanho; i++) {
-        scanf("%lf", &( (*vet)[i] ));
-    }
-
-    return tamanho;
 }
 
 int main (int argc, char **argv) {
