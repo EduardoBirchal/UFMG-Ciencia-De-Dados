@@ -1,0 +1,4 @@
+1 2
+Squirtle 15 25 40 agua
+Pikachu 26 41 19 agua
+Sandslash 62 31 40 pedra

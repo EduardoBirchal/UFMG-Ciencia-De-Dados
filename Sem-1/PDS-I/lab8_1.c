@@ -71,7 +71,8 @@ int main (int argc, char **argv) {
     char input[MAX_INPUT];
 
     while (1) {
-        fgets(input, MAX_INPUT, stdin);
+        if (!fgets(input, MAX_INPUT, stdin))
+            fgets(input, MAX_INPUT, stdin);
 
         removeNewlines(input);
 
