@@ -38,12 +38,11 @@ class Vetor
 
         void SetElemento(int indice, tipo elemento) {
             _array[indice] = elemento;
-            _tamanho++;
+            _atual++;
         }
 
         void AdicionaElemento(tipo elemento) {
-            _array[_atual] = elemento;
-            _tamanho++;
+            SetElemento(_atual, elemento);
         }
 
         void Imprime() {
