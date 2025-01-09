@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include <math.h>
+#include <cmath>
 #include <vector>
 
 class Ponto {
@@ -46,7 +46,7 @@ class FiguraGeometrica {
             std::cout << centro.GetX() << " " << centro.GetY() << " ";
         }
 
-        virtual float CalculaArea () = 0;
+        virtual double CalculaArea () = 0;
 };
 
 class Retangulo : public FiguraGeometrica {
@@ -64,7 +64,7 @@ class Retangulo : public FiguraGeometrica {
             std::cout << "RETANGULO" << std::endl;
         }
 
-        float CalculaArea() override {
+        double CalculaArea() override {
             return ladoX * ladoY;
         }
 };
@@ -83,7 +83,7 @@ class Circulo : public FiguraGeometrica {
             std::cout << "CIRCULO" << std::endl;
         }
 
-        float CalculaArea() override {
+        double CalculaArea() override {
             return raio * raio * M_PI;
         }
 };
@@ -103,7 +103,7 @@ class Triangulo : public FiguraGeometrica {
             std::cout << "TRIANGULO" << std::endl;
         }
 
-        float CalculaArea() override {
+        double CalculaArea() override {
             return base * altura * 0.5;
         }
 };
@@ -111,10 +111,13 @@ class Triangulo : public FiguraGeometrica {
 using namespace std;
 
 int main() {
-    string input;
+    
     vector<FiguraGeometrica*> figuras = {};
 
-    while (input != "E") {
+    while (true) {
+        string input;
+
+        std::cin.clear();
         cin >> input;
 
         if (input == "R") {
@@ -138,7 +141,7 @@ int main() {
             figuras.push_back(new Circulo(xCentro, yCentro, raio));
         }
 
-        if (input == "R") {
+        if (input == "T") {
             int xCentro, yCentro, base, altura;
 
             cin >> xCentro;
@@ -146,7 +149,7 @@ int main() {
             cin >> base; 
             cin >> altura;
 
-            figuras.push_back(new Retangulo(xCentro, yCentro, base, altura));
+            figuras.push_back(new Triangulo(xCentro, yCentro, base, altura));
         }
 
         if (input == "D") {
@@ -156,13 +159,17 @@ int main() {
         }
 
         if (input == "A") {
-            float areaTotal = 0;
+            double areaTotal = 0;
 
             for (FiguraGeometrica* figura : figuras) {
                 areaTotal += figura->CalculaArea();
             }
 
             cout << areaTotal << endl;  
+        }
+
+        if (input == "E") {
+            break;
         }
     }
 
