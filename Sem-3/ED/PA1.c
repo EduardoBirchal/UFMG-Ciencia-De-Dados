@@ -169,6 +169,25 @@ void recursiveSelectionSort(int arr[], int l, int r, sortperf_t * s)
 
 // selection sort
 void selectionSort(int arr[], int l, int r, sortperf_t * s) { 
+  inccalls(s, 1);
+
+  for (int i = l; i < r-1; i++) {
+    int min = arr[i];
+
+    for (int j = i; j < r; j++) {
+      inccmp(s, 1);
+
+      if (arr[j] < min) {
+        min = arr[j];
+      }
+    }
+
+    inccmp(s, 1);
+
+    if (min != arr[i]) {
+      swap(&arr[i], &min, s);
+    }
+  }
   return;
 }
 
