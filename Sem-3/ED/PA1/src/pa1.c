@@ -10,7 +10,6 @@
 #include <string.h>
 #include <math.h>
 #include <time.h>
-
 #include <unistd.h>
 
 #define ALGINSERTION 1
@@ -28,15 +27,27 @@ typedef struct alg{
 } alg_t;
 
 alg_t algvet[]={
-  {ALGINSERTION,"i"},
-  {ALGSELECTION,"s"},
-  {ALGQSORT,"q"},
-  {ALGQSORT3,"q3"},
-  {ALGQSORTINS,"qi"},
-  {ALGQSORT3INS,"q3i"},
-  {ALGSHELLSORT,"h"},
-  {ALGRECSEL,"rs"},
+  {ALGINSERTION},
+  {ALGSELECTION},
+  {ALGQSORT},
+  {ALGQSORT3},
+  {ALGQSORTINS},
+  {ALGQSORT3INS},
+  {ALGSHELLSORT},
+  {ALGRECSEL},
   {0,0}
+};
+
+// pra evitar o warning sobre atribuir strings constantes diretamente a char *
+char algstrs[8][4] = {
+  "i",
+  "s",
+  "q",
+  "q3",
+  "qi",
+  "q3i",
+  "h",
+  "rs",
 };
 
 int name2num(char * name){
@@ -239,6 +250,8 @@ void parse_args(int argc, char ** argv, opt_t * opt)
      // variaveis externas do getopt
      extern char * optarg;
      extern int optind;
+     
+     if (optind == 999) printf("PROBLEMAO OPTIND"); // TEMP!!!
 
      // variavel auxiliar
      int c;
@@ -299,7 +312,14 @@ int main (int argc, char ** argv){
   char pref[100];
   opt_t opt;
   struct timespec inittp, endtp, restp;
-  int retp;
+  int retp = 1;
+  
+  if (retp == 999) printf("PROBLEMAO"); // TEMP!!!
+  
+  // hotfix pra evitar o warning sobre atribuir constantes string a char *
+  for (int i=0; i < 8; i++) {
+      algvet[i].name = algstrs[i];
+  }
 
   // parse_args
   parse_args(argc,argv,&opt);
