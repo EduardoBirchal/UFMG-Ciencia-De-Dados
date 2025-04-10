@@ -9,8 +9,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include <unistd.h>
 #include <time.h>
+#include <unistd.h>
 
 #define ALGINSERTION 1
 #define ALGSELECTION 2
@@ -27,15 +27,27 @@ typedef struct alg{
 } alg_t;
 
 alg_t algvet[]={
-  {ALGINSERTION,"i"},
-  {ALGSELECTION,"s"},
-  {ALGQSORT,"q"},
-  {ALGQSORT3,"q3"},
-  {ALGQSORTINS,"qi"},
-  {ALGQSORT3INS,"q3i"},
-  {ALGSHELLSORT,"h"},
-  {ALGRECSEL,"rs"},
+  {ALGINSERTION},
+  {ALGSELECTION},
+  {ALGQSORT},
+  {ALGQSORT3},
+  {ALGQSORTINS},
+  {ALGQSORT3INS},
+  {ALGSHELLSORT},
+  {ALGRECSEL},
   {0,0}
+};
+
+// pra evitar o warning sobre atribuir strings constantes diretamente a char *
+char algstrs[8][4] = {
+  "i",
+  "s",
+  "q",
+  "q3",
+  "qi",
+  "q3i",
+  "h",
+  "rs",
 };
 
 int name2num(char * name){
@@ -171,21 +183,21 @@ void recursiveSelectionSort(int arr[], int l, int r, sortperf_t * s)
 void selectionSort(int arr[], int l, int r, sortperf_t * s) { 
   inccalls(s, 1);
 
-  for (int i = l; i < r-1; i++) {
-    int min = arr[i];
+  for (int i = l; i < r; i++) {
+    int posMin = i;
 
-    for (int j = i; j < r; j++) {
+    // find lowest number in arr[i]...arr[r]
+    for (int j = i + 1; j <= r; j++) { 
       inccmp(s, 1);
 
-      if (arr[j] < min) {
-        min = arr[j];
+      if (arr[j] < arr[posMin]) {
+        posMin = j;
       }
     }
 
-    inccmp(s, 1);
-
-    if (min != arr[i]) {
-      swap(&arr[i], &min, s);
+    // if there is a number smaller than arr[i] in the interval, swap the two
+    if (posMin != i) {
+      swap(&arr[i], &arr[posMin], s);
     }
   }
   return;
@@ -193,6 +205,22 @@ void selectionSort(int arr[], int l, int r, sortperf_t * s) {
 
 //insertion sort
 void insertionSort(int v[], int l, int r, sortperf_t * s) {
+  inccalls(s, 1);
+
+  for (int i = l+1; i <= r; i++) {
+    int j;
+    int valor = v[i];
+
+    for (j = i; j > 0 && v[j-1] > valor; j--) {
+      inccmp(s, 1);
+      incmove(s, 1);
+      v[j] = v[j-1];
+    }
+
+    if (j != i)
+      v[j] = valor;
+  }
+
   return;
 }
 
@@ -257,6 +285,8 @@ void parse_args(int argc, char ** argv, opt_t * opt)
      // variaveis externas do getopt
      extern char * optarg;
      extern int optind;
+     
+     if (optind == 999) printf("PROBLEMAO OPTIND"); // TEMP!!!
 
      // variavel auxiliar
      int c;
@@ -317,7 +347,14 @@ int main (int argc, char ** argv){
   char pref[100];
   opt_t opt;
   struct timespec inittp, endtp, restp;
-  int retp;
+  int retp = 1;
+  
+  if (retp == 999) printf("PROBLEMAO"); // TEMP!!!
+  
+  // hotfix pra evitar o warning sobre atribuir constantes string a char *
+  for (int i=0; i < 8; i++) {
+      algvet[i].name = algstrs[i];
+  }
 
   // parse_args
   parse_args(argc,argv,&opt);

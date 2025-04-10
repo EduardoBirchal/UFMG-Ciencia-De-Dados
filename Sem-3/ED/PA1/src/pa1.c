@@ -205,6 +205,22 @@ void selectionSort(int arr[], int l, int r, sortperf_t * s) {
 
 //insertion sort
 void insertionSort(int v[], int l, int r, sortperf_t * s) {
+  inccalls(s, 1);
+
+  for (int i = l+1; i <= r; i++) {
+    int j;
+    int valor = v[i];
+
+    for (j = i; j > 0 && v[j-1] > valor; j--) {
+      inccmp(s, 1);
+      incmove(s, 1);
+      v[j] = v[j-1];
+    }
+
+    if (j != i)
+      v[j] = valor;
+  }
+
   return;
 }
 
