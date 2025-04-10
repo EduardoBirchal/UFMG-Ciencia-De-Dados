@@ -410,6 +410,14 @@ int main (int argc, char ** argv){
 
   printsortperf(&s,buf,pref);
   printf("%s\n",buf);
+  
+  int success = 1;
+
+  for (int i = 0; i < opt.size-1; i++) {
+    if (vet[i+1] < vet [i]) success = 0;
+  }
+
+  printf(success ? "success\n" : "failure\n");
 
   exit(0);
 }
