@@ -218,8 +218,7 @@ void insertionSort(int v[], int l, int r, sortperf_t * s) {
       v[j] = v[j-1];
     }
 	
-	inccmp(s, 1);
-	
+	  inccmp(s, 1);
    
     v[j] = valor;
     incmove(s, 1);
@@ -240,22 +239,106 @@ int median (int a, int b, int c) {
 
 // quicksort partition using median of 3
 void partition3(int * A, int l, int r, int *i, int *j, sortperf_t *s) {
+  inccalls(s, 1);
+
+  int media = (l+r)/2;
+
+  int pivot = median(A[l],A[r],A[media]);
+
+  *i = l;
+  *j = r;
+
+  while (*i <= *j) {
+    while (1) {
+      inccmp(s,1);
+      if (A[*j] <= pivot) break;
+      (*j)--;
+    }
+
+    while (1) {
+      inccmp(s,1);
+      if (A[*i] >= pivot) break;
+      (*i)++;
+    }
+
+    if (*i <= *j) {
+      swap(&A[*i], &A[*j], s);
+
+      (*i)++;
+      (*j)--;
+    }
+
+  }
 }
 
 // standard quicksort partition
 void partition(int * A, int l, int r, int *i, int *j, sortperf_t *s) {
+  inccalls(s, 1);
+
+  int pivot = A[(l + r) / 2];
+
+  *i = l;
+  *j = r;
+
+  while (*i <= *j) {
+    while (1) {
+      inccmp(s,1);
+      if (A[*j] <= pivot) break;
+      (*j)--;
+    }
+
+    while (1) {
+      inccmp(s,1);
+      if (A[*i] >= pivot) break;
+      (*i)++;
+    }
+
+    if (*i <= *j) {
+      swap(&A[*i], &A[*j], s);
+
+      (*i)++;
+      (*j)--;
+    }
+
+  }
 }
 
 // standard quicksort
 void quickSort(int * A, int l, int r, sortperf_t *s) { 
+  if(l<r){
+    inccalls(s,1); 
+    int i,j;
+    partition(A,l,r,&i,&j,s);
+
+    quickSort(A,l,j,s);
+    quickSort(A,i,r,s);
+  }
 }
 
 // quicksort with median of 3
 void quickSort3(int * A, int l, int r, sortperf_t *s) { 
+  if(l < r){
+    inccalls(s,1); 
+    int i,j;
+
+    partition3(A,l,r,&i,&j,s);
+
+    quickSort3(A,i,r,s);
+    quickSort3(A,l,j,s);
+  }
 }
 
 // quicksort with insertion for small partitions
 void quickSortIns(int * A, int l, int r, sortperf_t *s) { 
+  if(l < r){
+    inccalls(s,1); 
+    int i,j;
+
+    partition(A,l,r,&i,&j,s);
+
+    quickSort(A,i,r,s);
+    quickSort(A,l,j,s);
+  }
 }
 
 // quicksort with insertion for small partitions and median of 3
