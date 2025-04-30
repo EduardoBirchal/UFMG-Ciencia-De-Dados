@@ -1,22 +1,24 @@
 #ifndef LIST_HPP
 #define LIST_HPP
 
+#include <vector>
+
 template <class tipo> class nodo {
     public:
-        nodo (tipo dataIn = NULL, nodo *proxIn = nullptr) {
+        nodo (tipo dataIn = NULL, vector<nodo*> vizinhosIn = new vector<nodo*>) {
             this->data = dataIn;
-            this->prox = proxIn;
+            this->vizinhos = vizinhosIn;
         }
         
         ~nodo();
 
-        void setProx (nodo *proxIn) {
-            this->prox = proxIn;
+        void addVizinho (nodo *proxVizinho) {
+            this->vizinhos = proxIn;
         }
 
     private:
         tipo data;
-        nodo *prox;
+        vector<nodo*> vizinhos;
 };
 
 class listaAdjacencia{
