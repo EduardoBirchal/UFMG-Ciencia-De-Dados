@@ -3,31 +3,42 @@
 
 #include <vector>
 
-template <class tipo> class nodo {
+class nodo {
     public:
-        nodo (tipo dataIn = NULL, vector<nodo*> vizinhosIn = new vector<nodo*>) {
+        nodo (std::vector<int> dataIn = std::vector<int>(), nodo *proxIn = nullptr) {
             this->data = dataIn;
-            this->vizinhos = vizinhosIn;
+            this->prox = proxIn;
         }
         
-        ~nodo();
+        ~nodo() {
+            delete this->prox;
+        };
 
-        void addVizinho (nodo *proxVizinho) {
-            this->vizinhos = proxIn;
+        void setProx (nodo *proxIn) {
+            this->prox = proxIn;
+        }
+
+        void setData (std::vector<int> dataIn) {
+            this->data = dataIn;
         }
 
     private:
-        tipo data;
-        vector<nodo*> vizinhos;
+        std::vector<int> data;
+        nodo *prox;
 };
 
 class listaAdjacencia{
     public:
-        listaAdjacencia();
-        ~listaAdjacencia();
+        listaAdjacencia(nodo *headIn = nullptr) {
+            this->head = headIn;
+        };
+
+        ~listaAdjacencia() {
+            delete this->tail;
+        };
 
     private:
-        nodo <int> *head;
+        nodo *head, *tail;
 };
 
 #endif
