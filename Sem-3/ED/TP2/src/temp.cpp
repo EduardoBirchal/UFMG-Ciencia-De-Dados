@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>      // Incluído para testar com strings
 #include <stdexcept>   // Incluído para capturar exceções
-#include "linkedList.hpp" // Incluído o header correto
+#include "../include/linkedList.hpp" // Incluído o header correto
 
 // Função auxiliar para imprimir e esvaziar a lista
 // Isso demonstra as funções readHead() e remove()
