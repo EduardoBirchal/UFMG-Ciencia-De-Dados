@@ -41,8 +41,14 @@ public:
     // Destrutor
     ~linkedList();
 
+    // Verifica se a lista está vazia
+    bool isEmpty();
+
+    // Adiciona um novo nó com o dado fornecido ao início da lista
+    void addToHead(T data);
+
     // Adiciona um novo nó com o dado fornecido ao fim da lista
-    void add(T data);
+    void addToTail(T data);
 
     // Remove um nó em um índice específico
     bool remove(int index);
@@ -69,14 +75,30 @@ linkedList<T>::~linkedList() {
     }
 }
 
+// Verifica se a lista está vazia
+template<class T>
+bool linkedList<T>::isEmpty() {
+    return head == nullptr;
+}
+
+// Adiciona um novo nó com o dado fornecido no início da lista
+template<class T>
+void linkedList<T>::addToHead(T data) {
+    // Cria um novo nó, fazendo ele apontar para a cabeça atual
+    listNode<T>* newNode = new listNode<T>(data, head);
+
+    // A cabeça da lista agora é o novo nó
+    head = newNode;
+}
+
 // Adiciona um novo nó com o dado fornecido no final da lista
 template<class T>
-void linkedList<T>::add(T data) {
+void linkedList<T>::addToTail(T data) {
     // Cria um novo nó usando o construtor
     listNode<T>* newNode = new listNode<T>(data);
 
     // Se a lista estiver vazia, o novo nó se torna a cabeça
-    if (head == nullptr) {
+    if (isEmpty()) {
         head = newNode;
     } else {
         // Caso contrário, percorre até o final da lista
@@ -93,7 +115,7 @@ void linkedList<T>::add(T data) {
 template<class T>
 bool linkedList<T>::remove(int index) {
     // Verifica se o índice é inválido ou se a lista está vazia
-    if (head == nullptr || index < 0) {
+    if (isEmpty() || index < 0) {
         return false;
     }
 
@@ -130,7 +152,7 @@ bool linkedList<T>::remove(int index) {
 // Lê e retorna o dado do nó da cabeça
 template<class T>
 T linkedList<T>::readHead() {
-    if (head != nullptr) {
+    if (!isEmpty()) {
         return head->getData();
     }
 

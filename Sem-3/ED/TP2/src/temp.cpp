@@ -1,80 +1,71 @@
 #include <iostream>
-#include <string>      // Incluído para testar com strings
-#include <stdexcept>   // Incluído para capturar exceções
-#include "../include/linkedList.hpp" // Incluído o header correto
+#include "../include/stack.hpp" // Inclui a sua classe de pilha
 
-// Função auxiliar para imprimir e esvaziar a lista
-// Isso demonstra as funções readHead() e remove()
-template<class T>
-void printAndClearList(linkedList<T>& list) {
-    std::cout << "Conteúdo da lista: ";
+void run_tests() {
+    std::cout << "--- Iniciando Testes da Pilha ---" << std::endl;
+
+    // Cria uma pilha de inteiros
+    stack<int> s;
+
+    // Teste 1: A pilha deve começar vazia
+    std::cout << "\nTeste 1: Verificando se a pilha recem-criada esta vazia..." << std::endl;
+    if (s.isEmpty()) {
+        std::cout << "Resultado: OK! A pilha esta vazia." << std::endl;
+    } else {
+        std::cout << "Resultado: FALHOU! A pilha deveria estar vazia." << std::endl;
+    }
+
+    // Teste 2: Adicionando elementos com push()
+    std::cout << "\nTeste 2: Adicionando os valores 10, 20, 30 na pilha..." << std::endl;
+    s.push(10);
+    s.push(20);
+    s.push(30);
+    std::cout << "A pilha nao deve mais estar vazia." << std::endl;
+    if (!s.isEmpty()) {
+        std::cout << "Resultado: OK! A pilha nao esta vazia." << std::endl;
+    } else {
+        std::cout << "Resultado: FALHOU! A pilha nao deveria estar vazia." << std::endl;
+    }
+
+    // Teste 3: Verificando o topo da pilha com peek()
+    std::cout << "\nTeste 3: Verificando o topo da pilha com peek()..." << std::endl;
+    int topo = s.peek();
+    std::cout << "Valor esperado no topo: 30" << std::endl;
+    std::cout << "Valor retornado por peek(): " << topo << std::endl;
+    if (topo == 30) {
+        std::cout << "Resultado: OK!" << std::endl;
+    } else {
+        std::cout << "Resultado: FALHOU!" << std::endl;
+    }
+
+    // Teste 4: Removendo elementos com pop()
+    std::cout << "\nTeste 4: Removendo elementos com pop() (ordem LIFO)..." << std::endl;
+    std::cout << "Removendo -> " << s.pop() << " (Esperado: 30)" << std::endl;
+    std::cout << "Removendo -> " << s.pop() << " (Esperado: 20)" << std::endl;
+    std::cout << "Removendo -> " << s.pop() << " (Esperado: 10)" << std::endl;
+
+    // Teste 5: A pilha deve estar vazia novamente
+    std::cout << "\nTeste 5: Verificando se a pilha esta vazia apos os pops..." << std::endl;
+    if (s.isEmpty()) {
+        std::cout << "Resultado: OK! A pilha esta vazia." << std::endl;
+    } else {
+        std::cout << "Resultado: FALHOU! A pilha deveria estar vazia." << std::endl;
+    }
+
+    // Teste 6: Tentando usar pop() em uma pilha vazia (tratamento de exceção)
+    std::cout << "\nTeste 6: Testando pop() em uma pilha vazia..." << std::endl;
     try {
-        while (true) {
-            std::cout << list.readHead() << " ";
-            list.remove(0); // Remove o primeiro elemento
-        }
+        s.pop();
+        std::cout << "Resultado: FALHOU! Uma excecao std::out_of_range deveria ter sido lancada." << std::endl;
     } catch (const std::out_of_range& e) {
-        // A exceção é esperada quando a lista fica vazia
-        std::cout << "(vazia)" << std::endl;
-    }
-}
-
-void testIntegerList() {
-    std::cout << "--- Testando linkedList com inteiros ---" << std::endl;
-    
-    // Cria uma instância da linkedList para inteiros
-    linkedList<int> myList;
-    
-    // Adiciona alguns elementos
-    myList.add(10);
-    myList.add(20);
-    myList.add(30);
-    myList.add(40);
-    myList.add(50);
-
-    std::cout << "Lista inicial criada." << std::endl;
-
-    // Remove o nó no índice 2 (valor 30)
-    std::cout << "\nRemovendo o nó no índice 2..." << std::endl;
-    myList.remove(2);
-    
-    // Remove o nó no índice 0 (a cabeça, valor 10)
-    std::cout << "Removendo o nó no índice 0..." << std::endl;
-    myList.remove(0);
-    
-    // Tenta remover em um índice inválido
-    std::cout << "Tentando remover no índice 15 (inválido)..." << std::endl;
-    bool success = myList.remove(15);
-    if (!success) {
-        std::cout << "Falha ao remover no índice 15, como esperado." << std::endl;
+        std::cout << "Resultado: OK! Capturou a excecao esperada." << std::endl;
+        std::cout << "Mensagem da excecao: " << e.what() << std::endl;
     }
 
-    printAndClearList(myList);
+    std::cout << "\n--- Testes Concluidos ---" << std::endl;
 }
-
-void testStringList() {
-    std::cout << "\n--- Testando linkedList com strings ---" << std::endl;
-    
-    // Cria uma instância da linkedList para strings
-    linkedList<std::string> myStringList;
-    
-    // Adiciona alguns elementos
-    myStringList.add("Olá");
-    myStringList.add("Mundo");
-    myStringList.add("!");
-
-    std::cout << "Lista de strings criada." << std::endl;
-    
-    std::cout << "\nRemovendo o nó no índice 1 ('Mundo')..." << std::endl;
-    myStringList.remove(1);
-
-    printAndClearList(myStringList);
-}
-
 
 int main() {
-    testIntegerList();
-    testStringList();
-
+    run_tests();
     return 0;
 }
