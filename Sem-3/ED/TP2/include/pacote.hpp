@@ -1,18 +1,48 @@
-#ifndef PACOTE_H
-#define PACOTE_H
+#ifndef PACOTE_HPP
+#define PACOTE_HPP
 
-enum estadosPacote {  };
+#include <string>
 
-class Packet 
-{
+// Representa os estados de um pacote
+enum EstadoPacote {
+    inicial,
+    emTransporte,
+    sendoArmazenado,
+    armazenado,
+    sendoRetirado,
+    entregue
+};
+
+class Pacote {
 private:
-    int tempoArmazenamento, tempoTransporte, estado;
-public:
-    int getTempoArmazenamento ()            { return this->tempoArmazenamento; }
-    void setTempoArmazenamento (int n)      { this->tempoArmazenamento = n; }
+    int id;
+    int horaPostagem;
+    int idOrigem;
+    int idDestino;
+    int idAtual;
+    int idSecaoAtual;
+    EstadoPacote estado;
 
-    int getTempoTransporte ()          { return this->tempoTransporte; }
-    void setTempoTransporte (int n)    { this->tempoTransporte = n; }
+public:
+    // Construtor
+    Pacote(int id_pacote, int hora_postagem, int id_origem, int id_destino);
+
+    // Destrutor
+    ~Pacote();
+
+    // Getters
+    int getID() const;
+    int getHoraPostagem() const;
+    int getOrigem() const;
+    int getDestino() const;
+    int getAtual() const;
+    int getSecaoAtual() const;
+    EstadoPacote getEstado() const;
+    
+    // Setters
+    void setEstado(EstadoPacote novo_estado);
+    void setAtual(int id_atual);
+    void setSecaoAtual(int id_secao_atual);
 };
 
 #endif

@@ -6,7 +6,7 @@
 template<class T>
 class stack {
 private:
-    // A cabeça da lista é o topo da pilha
+    // A lista encadeada interna
     linkedList<T> list; 
 
 public:
@@ -16,51 +16,51 @@ public:
     // Destrutor
     ~stack();
 
-    // Adiciona um novo elemento ao topo da pilha
+    // Adiciona no topo
     void push(T data);
 
-    // Apenas retorna o elemento do topo sem remover ele
+    // Lê o topo
     T peek();
 
-    // Remove e retorna o elemento do topo da pilha
+    // Remove do topo
     T pop();
 
-    // Verifica se a pilha está vazia
+    // Verifica se vazia
     bool isEmpty();
 };
 
-// Construtor: O construtor padrão da lista já é chamado, inicializando a pilha
+// Construtor (usa o da lista)
 template<class T>
 stack<T>::stack() {}
 
-// Destrutor: O destrutor da lista é chamado automaticamente
+// Destrutor (usa o da lista)
 template<class T>
 stack<T>::~stack() {}
 
-// Adiciona um novo elemento ao topo da pilha (cabeça da lista)
+// Adiciona no topo (chama addToHead)
 template<class T>
 void stack<T>::push(T data) {
     list.addToHead(data);
 }
 
-// Retorna o elemento do topo sem remover ele
+// Lê o topo (chama readHead)
 template<class T>
 T stack<T>::peek() {
     return list.readHead();
 }
 
-// Remove e retorna o elemento do topo da pilha. Se a pilha estiver vazia, lança uma exceção
+// Remove do topo
 template<class T>
 T stack<T>::pop() {
     T data = peek();
-    list.remove(0); // Remove o antigo topo (cabeça da lista)
+    list.remove(0); // Remove da cabeça da lista
     return data;
 }
 
-// Verifica se a pilha está vazia
+// Verifica se vazia (chama isEmpty da lista)
 template<class T>
 bool stack<T>::isEmpty() {
     return list.isEmpty();
 }
 
-#endif // STACK_H
+#endif

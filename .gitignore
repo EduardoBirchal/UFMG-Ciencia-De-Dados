@@ -1,3 +1,10 @@
 Sem-3/ED/TP2/TP2-Caio
 Sem-3/ED/TP2/.vscode/settings.json
 *.exe
+Sem-3/BD/TP2/bd.py
+Sem-3/BD/TP2/bd_1.py
+Sem-3/BD/TP2/dados_unificados.csv
+Sem-3/BD/TP2/dicionario.csv
+Sem-3/BD/TP2/Mortalidade_2019_filtrado.csv
+Sem-3/BD/TP2/schema.sql
+Sem-3/BD/TP2/ufs_filtrado.csv

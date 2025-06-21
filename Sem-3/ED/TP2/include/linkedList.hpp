@@ -3,6 +3,7 @@
 
 #include <stdexcept>
 
+// Nó da lista encadeada
 template<class T> class listNode
 {
 private:
@@ -11,25 +12,25 @@ private:
 
 public:
     // Construtor
-    listNode (T inData, listNode *inNext = nullptr) { this->data = inData; this->next = inNext; };
+    listNode (T inData, listNode *inNext = nullptr) { this->data = inData; this->next = inNext; }
 
     // Destrutor
-    ~listNode () {};
+    ~listNode () {}
 
-    // Retorna os dados
+    // Retorna dado
     T getData () { return this->data; }
 
-    // Escreve novos dados
+    // Define dado
     void setData (T data) { this->data = data; }    
 
-    // Retorna um pointer pro próximo nó
+    // Retorna próximo nó
     listNode* getNext () { return this->next; }
 
-    // Define o próximo nó
+    // Define próximo nó
     void setNext (listNode* next) { this->next = next; }
 };
 
-
+// Lista encadeada
 template<class T> class linkedList {
 private:
     listNode<T>* head;
@@ -44,27 +45,27 @@ public:
     // Verifica se a lista está vazia
     bool isEmpty();
 
-    // Adiciona um novo nó com o dado fornecido ao início da lista
+    // Adiciona na cabeça
     void addToHead(T data);
 
-    // Adiciona um novo nó com o dado fornecido ao fim da lista
+    // Adiciona na cauda
     void addToTail(T data);
 
-    // Remove um nó em um índice específico
+    // Remove por índice
     bool remove(int index);
 
-    // Lê os conteúdos da cabeça
+    // Lê a cabeça
     T readHead();
 };
 
 
-// Construtor: Inicializa uma lista vazia
+// Construtor
 template<class T>
 linkedList<T>::linkedList() {
     head = nullptr;
 }
 
-// Destrutor: Libera toda a memória alocada pros nós da lista
+// Destrutor
 template<class T>
 linkedList<T>::~linkedList() {
     listNode<T>* current = head;
@@ -75,51 +76,50 @@ linkedList<T>::~linkedList() {
     }
 }
 
-// Verifica se a lista está vazia
+// Verifica se vazia
 template<class T>
 bool linkedList<T>::isEmpty() {
     return head == nullptr;
 }
 
-// Adiciona um novo nó com o dado fornecido no início da lista
+// Adiciona na cabeça
 template<class T>
 void linkedList<T>::addToHead(T data) {
-    // Cria um novo nó, fazendo ele apontar para a cabeça atual
+    // Cria novo nó, aponta para a cabeça antiga
     listNode<T>* newNode = new listNode<T>(data, head);
-
-    // A cabeça da lista agora é o novo nó
+    // Nova cabeça é o novo nó
     head = newNode;
 }
 
-// Adiciona um novo nó com o dado fornecido no final da lista
+// Adiciona na cauda
 template<class T>
 void linkedList<T>::addToTail(T data) {
-    // Cria um novo nó usando o construtor
+    // Cria novo nó
     listNode<T>* newNode = new listNode<T>(data);
 
-    // Se a lista estiver vazia, o novo nó se torna a cabeça
+    // Se vazia, novo nó é a cabeça
     if (isEmpty()) {
         head = newNode;
     } else {
-        // Caso contrário, percorre até o final da lista
+        // Senão, percorre até o fim
         listNode<T>* temp = head;
         while (temp->getNext() != nullptr) {
             temp = temp->getNext();
         }
-        // Conecta o último nó ao novo nó
+        // Conecta o último nó
         temp->setNext(newNode);
     }
 }
 
-// Remove um nó em um índice específico
+// Remove por índice
 template<class T>
 bool linkedList<T>::remove(int index) {
-    // Verifica se o índice é inválido ou se a lista está vazia
+    // Checa se índice é inválido
     if (isEmpty() || index < 0) {
         return false;
     }
 
-    // Se o nó é a cabeça, remove ele e atualiza a cabeça
+    // Remove a cabeça
     if (index == 0) {
         listNode<T>* temp = head;
         head = head->getNext();
@@ -127,36 +127,33 @@ bool linkedList<T>::remove(int index) {
         return true;
     }
 
-    // Senão, percorre até o nó anterior ao que será removido
+    // Percorre até o nó anterior ao alvo
     listNode<T>* current = head;
     int currentIndex = 0;
-    
-    // Para no nó logo antes do índice alvo
     while (current != nullptr && currentIndex < index - 1) {
         current = current->getNext();
         currentIndex++;
     }
 
-    // Verifica se o índice está fora dos limites
+    // Checa se índice está fora dos limites
     if (current == nullptr || current->getNext() == nullptr) {
         return false;
     }
 
-    // Remove o nó 
+    // Remove o nó
     listNode<T>* nodeToDelete = current->getNext();
-    current->setNext(nodeToDelete->getNext());  // Desconecta o nó
-    delete nodeToDelete;                        // Libera sua memória
+    current->setNext(nodeToDelete->getNext());  // Desconecta
+    delete nodeToDelete;                        // Libera memória
     return true;
 }
 
-// Lê e retorna o dado do nó da cabeça
+// Lê a cabeça
 template<class T>
 T linkedList<T>::readHead() {
     if (!isEmpty()) {
         return head->getData();
     }
-
-    // Se a lista estiver vazia, lança uma exceção
+    // Se vazia, lança exceção
     throw std::out_of_range("Lista vazia");
 }
 
