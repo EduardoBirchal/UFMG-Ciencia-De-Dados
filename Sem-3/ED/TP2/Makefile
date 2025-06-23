@@ -3,19 +3,44 @@ INCLUDE_DIR = include
 BIN_DIR = bin
 SRC_DIR = src
 
-CFLAGS = -I $(INCLUDE_DIR)
+# Flags do compilador
+CXX = g++
+CXXFLAGS = -I$(INCLUDE_DIR) -std=c++11 -Wall -Wextra
 
+# Lista de arquivos objeto
+OBJECTS = $(OBJ_DIR)/pacote.o $(OBJ_DIR)/armazem.o $(OBJ_DIR)/main.o
 
-all: output
+# Nome do executável final
+EXECUTABLE = $(BIN_DIR)/tp2
 
-output: $(OBJ_DIR)/pacote.o $(OBJ_DIR)/armazem.o $(OBJ_DIR)/main.o
-	g++ -o $(BIN_DIR)/tp2.out $(OBJ_DIR)/pacote.o $(OBJ_DIR)/armazem.o $(OBJ_DIR)/main.o
+# Regra padrão
+all: $(EXECUTABLE)
 
-$(OBJ_DIR)/main.o: $(SRC_DIR)/temp.cpp $(INCLUDE_DIR)/linkedList.hpp $(INCLUDE_DIR)/stack.hpp | $(OBJ_DIR)
-	g++ $(CFLAGS) -c $(SRC_DIR)/temp.cpp -o $(OBJ_DIR)/main.o
+# Regra de linkagem final
+$(EXECUTABLE): $(OBJECTS) | $(BIN_DIR)
+	$(CXX) $(CXXFLAGS) -o $@ $^
+
+# --- Regras de Compilação ---
+
+# CORREÇÃO: Usa 'main.cpp' como fonte para 'main.o'
+$(OBJ_DIR)/main.o: $(SRC_DIR)/main.cpp $(INCLUDE_DIR)/armazem.hpp $(INCLUDE_DIR)/pacote.hpp | $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) -c $(SRC_DIR)/main.cpp -o $@
 
 $(OBJ_DIR)/pacote.o: $(SRC_DIR)/pacote.cpp $(INCLUDE_DIR)/pacote.hpp | $(OBJ_DIR)
-	g++ $(CFLAGS) -c $(SRC_DIR)/pacote.cpp -o $(OBJ_DIR)/pacote.o
+	$(CXX) $(CXXFLAGS) -c $(SRC_DIR)/pacote.cpp -o $@
 
-$(OBJ_DIR)/armazem.o: $(SRC_DIR)/armazem.cpp $(INCLUDE_DIR)/armazem.hpp | $(OBJ_DIR)
-	g++ $(CFLAGS) -c $(SRC_DIR)/armazem.cpp -o $(OBJ_DIR)/armazem.o
+$(OBJ_DIR)/armazem.o: $(SRC_DIR)/armazem.cpp $(INCLUDE_DIR)/armazem.hpp $(INCLUDE_DIR)/stack.hpp $(INCLUDE_DIR)/linkedList.hpp | $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) -c $(SRC_DIR)/armazem.cpp -o $@
+
+# --- Regras Auxiliares ---
+
+# Cria os diretórios se não existirem
+$(OBJ_DIR) $(BIN_DIR):
+	mkdir -p $@
+
+# Limpa os arquivos compilados
+clean:
+	rm -rf $(OBJ_DIR) $(BIN_DIR)
+
+# Declara alvos que não são arquivos
+.PHONY: all clean

@@ -85,7 +85,7 @@ linkedList<T>::~linkedList() {
 
         // Se a flag estiver ativa e T for um ponteiro, deleta o dado
         if (deallocateNodes) {
-            delete current->getData();
+            delete (current->getData());
         }
 
         delete current;

@@ -8,7 +8,7 @@
 class Armazem {
 private:
     int id;
-    linkedList<stack<Pacote*>> secoes;
+    linkedList<stack<Pacote*>*> secoes;
 
 public:
     // Construtor
