@@ -11,7 +11,7 @@ private:
 
 public:
     // Construtor
-    stack();
+    explicit stack(bool doDeallocateNodes = false);
 
     // Destrutor
     ~stack();
@@ -20,18 +20,20 @@ public:
     void push(T data);
 
     // Lê o topo
-    T peek();
+    T& peek();
 
     // Remove do topo
     T pop();
 
     // Verifica se vazia
-    bool isEmpty();
+    bool isEmpty() const;
 };
 
-// Construtor (usa o da lista)
+// Construtor: inicializa a lista interna
 template<class T>
-stack<T>::stack() {}
+stack<T>::stack(bool doDeallocateNodes): list(doDeallocateNodes) {
+    // BUG CORRIGIDO: Sintaxe de inicialização de membro para composição
+}
 
 // Destrutor (usa o da lista)
 template<class T>
@@ -45,7 +47,7 @@ void stack<T>::push(T data) {
 
 // Lê o topo (chama readHead)
 template<class T>
-T stack<T>::peek() {
+T& stack<T>::peek() {
     return list.readHead();
 }
 
@@ -59,7 +61,7 @@ T stack<T>::pop() {
 
 // Verifica se vazia (chama isEmpty da lista)
 template<class T>
-bool stack<T>::isEmpty() {
+bool stack<T>::isEmpty() const {
     return list.isEmpty();
 }
 
