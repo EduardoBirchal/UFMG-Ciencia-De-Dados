@@ -1,21 +1,27 @@
 #ifndef ARMAZEM_HPP
 #define ARMAZEM_HPP
 
-#include "stack.hpp"
-#include "pacote.hpp"
+#include "secao.hpp"
+#include "linkedList.hpp"
 
 // Representa um armazém com seções de armazenamento
 class Armazem {
 private:
     int id;
-    linkedList<stack<Pacote*>*> secoes;
+    linkedList<Secao*> secoes; // Lista de ponteiros para Secao
+
+    // Método auxiliar para encontrar uma seção pelo ID ou criar uma nova se não existir
+    Secao* findOrCreateSecao(int id_secao);
 
 public:
     // Construtor
-    Armazem(int id_armazem, int num_secoes);
+    explicit Armazem(int id_armazem);
 
     // Destrutor
     ~Armazem();
+    
+    // Adiciona uma nova seção ao armazém
+    void addSecao(int id_secao); // Alterado para receber um ID específico
 
     // Adiciona um pacote a uma seção
     void adicionarPacote(Pacote* pacote);

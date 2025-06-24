@@ -3,6 +3,24 @@
 
 #include <stdexcept>
 
+// Helper para deleção condicional de nós
+// Template genérico para não-ponteiros
+template<typename T>
+struct NodeDeleter {
+    // Não faz nada
+    static void destroy(T) { }
+};
+
+// Especialização para ponteiros
+template<typename T>
+struct NodeDeleter<T*> {
+    // Deleta o ponteiro
+    static void destroy(T* ptr) {
+        delete ptr;
+    }
+};
+
+
 // Nó da lista encadeada
 template<class T> class listNode
 {
@@ -20,7 +38,7 @@ public:
     // Retorna referência ao dado
     T& getData () { return this->data; }
 
-    // Define dado
+    // Define o dado
     void setData (T data) { this->data = data; }    
 
     // Retorna próximo nó
@@ -65,8 +83,11 @@ public:
     // Lê em um índice
     T& readIndex(int index);
 
+    // Retorna o índice de um valor
+    int findIndexByValue(const T& value) const;
+
 private:
-    // Pega o nó em um índice (método auxiliar)
+    // Pega o nó em um índice
     listNode<T>* getNode(int index);
 };
 
@@ -83,9 +104,9 @@ linkedList<T>::~linkedList() {
     while (current != nullptr) {
         listNode<T>* next = current->getNext();
 
-        // Se a flag estiver ativa e T for um ponteiro, deleta o dado
+        // Usa o helper para deleção condicional
         if (deallocateNodes) {
-            delete (current->getData());
+            NodeDeleter<T>::destroy(current->getData());
         }
 
         delete current;
@@ -120,11 +141,7 @@ void linkedList<T>::addToTail(T data) {
     if (isEmpty()) {
         head = newNode;
     } else {
-        listNode<T>* temp = head;
-        while (temp->getNext() != nullptr) {
-            temp = temp->getNext();
-        }
-        temp->setNext(newNode);
+        getNode(size - 1)->setNext(newNode);
     }
     size++;
 }
@@ -149,18 +166,23 @@ template<class T>
 bool linkedList<T>::remove(int index) {
     if (isEmpty() || index < 0 || index >= size) return false;
 
+    listNode<T>* alvo;
     if (index == 0) {
-        listNode<T>* temp = head;
+        alvo = head;
         head = head->getNext();
-        delete temp;
     } else {
         listNode<T>* antecessorAlvo = getNode(index - 1);
-        listNode<T>* alvo = antecessorAlvo->getNext();
+        alvo = antecessorAlvo->getNext();
         antecessorAlvo->setNext(alvo->getNext());
-        delete alvo;
     }
 
-    size--; // BUG CRÍTICO CORRIGIDO: decrementar o tamanho
+    if(deallocateNodes){
+        // Usa o helper para deleção condicional
+        NodeDeleter<T>::destroy(alvo->getData());
+    }
+    delete alvo;
+
+    size--; 
     return true;
 }
 
@@ -177,6 +199,22 @@ T& linkedList<T>::readHead() {
 template<class T>
 T& linkedList<T>::readIndex(int index) {
     return getNode(index)->getData();
+}
+
+// Retorna o índice de um valor
+template<class T>
+int linkedList<T>::findIndexByValue(const T& value) const {
+    listNode<T>* current = head;
+    int index = 0;
+    while (current != nullptr) {
+        // Assume que T suporta o operador ==
+        if (current->getData() == value) {
+            return index;
+        }
+        current = current->getNext();
+        index++;
+    }
+    return -1; // Não encontrado
 }
 
 #endif

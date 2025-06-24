@@ -8,7 +8,7 @@ CXX = g++
 CXXFLAGS = -I$(INCLUDE_DIR) -std=c++11 -Wall -Wextra
 
 # Lista de arquivos objeto
-OBJECTS = $(OBJ_DIR)/pacote.o $(OBJ_DIR)/armazem.o $(OBJ_DIR)/main.o
+OBJECTS = $(OBJ_DIR)/pacote.o $(OBJ_DIR)/armazem.o $(OBJ_DIR)/rede.o $(OBJ_DIR)/main.o $(OBJ_DIR)/escalonador.o
 
 # Nome do executável final
 EXECUTABLE = $(BIN_DIR)/tp2
@@ -23,8 +23,14 @@ $(EXECUTABLE): $(OBJECTS) | $(BIN_DIR)
 # --- Regras de Compilação ---
 
 # CORREÇÃO: Usa 'main.cpp' como fonte para 'main.o'
-$(OBJ_DIR)/main.o: $(SRC_DIR)/main.cpp $(INCLUDE_DIR)/armazem.hpp $(INCLUDE_DIR)/pacote.hpp | $(OBJ_DIR)
+$(OBJ_DIR)/main.o: $(SRC_DIR)/main.cpp $(INCLUDE_DIR)/armazem.hpp $(INCLUDE_DIR)/pacote.hpp $(INCLUDE_DIR)/rede.hpp $(INCLUDE_DIR)/escalonador.hpp | $(OBJ_DIR)
 	$(CXX) $(CXXFLAGS) -c $(SRC_DIR)/main.cpp -o $@
+
+$(OBJ_DIR)/escalonador.o: $(SRC_DIR)/escalonador.cpp $(INCLUDE_DIR)/escalonador.hpp $(INCLUDE_DIR)/minheap.hpp | $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) -c $(SRC_DIR)/escalonador.cpp -o $@
+
+$(OBJ_DIR)/rede.o: $(SRC_DIR)/rede.cpp $(INCLUDE_DIR)/rede.hpp | $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) -c $(SRC_DIR)/rede.cpp -o $@
 
 $(OBJ_DIR)/pacote.o: $(SRC_DIR)/pacote.cpp $(INCLUDE_DIR)/pacote.hpp | $(OBJ_DIR)
 	$(CXX) $(CXXFLAGS) -c $(SRC_DIR)/pacote.cpp -o $@

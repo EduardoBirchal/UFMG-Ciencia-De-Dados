@@ -1,51 +1,74 @@
 #include "armazem.hpp"
 #include <stdexcept>
 
-// Construtor
-Armazem::Armazem(int id_armazem, int num_secoes) : id(id_armazem) {
-    // Cria as seções (pilhas) vazias no armazém
-    for (int i = 0; i < num_secoes; ++i) {
-        stack<Pacote*> *nova_secao = new stack<Pacote*>(true);
-        secoes.addToTail(nova_secao);
-    }
+// Construtor: um armazém agora começa com 0 seções
+Armazem::Armazem(int id_armazem) 
+    : id(id_armazem), secoes(true) { // 'true' para que a lista delete os ponteiros de Secao
+    // Nenhuma seção é criada inicialmente
 }
 
 // Destrutor
 Armazem::~Armazem() {
-    // A memória dos ponteiros de Pacote deve ser gerenciada externamente
+    // O destrutor da lista 'secoes' gerencia a liberação da memória
 }
+
+// Método auxiliar privado para encontrar ou criar uma seção
+Secao* Armazem::findOrCreateSecao(int id_secao) {
+    // Procura por uma seção existente com o ID fornecido
+    for (int i = 0; i < secoes.getSize(); ++i) {
+        Secao* secao_atual = secoes.readIndex(i);
+        if (secao_atual->id == id_secao) {
+            return secao_atual; // Retorna a seção encontrada
+        }
+    }
+
+    // Se não encontrou, cria uma nova seção
+    Secao* nova_secao = new Secao(id_secao);
+    secoes.addToTail(nova_secao);
+    return nova_secao; // Retorna a seção recém-criada
+}
+
+
+// Adiciona uma nova seção com um ID específico
+void Armazem::addSecao(int id_secao) {
+    // Apenas chama o método auxiliar, que fará o trabalho
+    findOrCreateSecao(id_secao);
+}
+
 
 // Adiciona um pacote a sua seção designada
 void Armazem::adicionarPacote(Pacote* pacote) {
-    int id_secao = pacote->getSecaoAtual();
-
-    // Valida o ID da seção
-    if (id_secao < 0 || id_secao >= secoes.getSize()) {
-        throw std::out_of_range("ID de secao invalido para este armazem");
-    }
-
-    // Pega a referência para a pilha correta e adiciona o pacote
-    secoes.readIndex(id_secao)->push(pacote);
-    
-    // Atualiza o estado e a localização do pacote
+    // Atualiza a localização atual e o estado do pacote
+    pacote->setArmazemAtual(this->id);
     pacote->setEstado(EstadoPacote::armazenado);
-    pacote->setAtual(this->id);
+
+    // Faz o pacote determinar seu próximo destino na rota
+    pacote->atualizarDestinoAtual();
+
+    // Encontra a seção correspondente ao próximo destino ou cria uma nova
+    int id_secao_alvo = pacote->getDestinoAtual();
+    Secao* secao_alvo = findOrCreateSecao(id_secao_alvo);
+
+    // Atualiza a seção atual do pacote e o armazena
+    pacote->setSecaoAtual(id_secao_alvo);
+    secao_alvo->pilha.push(pacote);
 }
 
 // Remove um pacote do topo de uma seção
 Pacote* Armazem::removerPacote(int id_secao) {
-    // Valida o ID da seção
-    if (id_secao < 0 || id_secao >= secoes.getSize()) {
-        throw std::out_of_range("ID de secao invalido para este armazem");
+    // Procura pela seção
+    for (int i = 0; i < secoes.getSize(); ++i) {
+        Secao* secao_atual = secoes.readIndex(i);
+        if (secao_atual->id == id_secao) {
+            if (secao_atual->pilha.isEmpty()) {
+                return nullptr; // Seção encontrada, mas vazia
+            }
+            return secao_atual->pilha.pop();
+        }
     }
-
-    // Pega a referência para a pilha e remove o pacote se não estiver vazia
-    stack<Pacote*> *secao = secoes.readIndex(id_secao);
-    if (secao->isEmpty()) {
-        return nullptr; // Retorna nulo se a seção estiver vazia
-    }
-
-    return secao->pop();
+    
+    // Se a seção não for encontrada, lança uma exceção
+    throw std::out_of_range("ID de secao nao encontrado neste armazem");
 }
 
 // Retorna o ID do armazém
@@ -59,7 +82,5 @@ int Armazem::getNumSecoes() const {
 }
 
 // --- Instanciação Explícita de Template ---
-// Força o compilador a gerar o código para estas versões específicas dos templates,
-// tornando-as disponíveis para o linker.
 template class stack<Pacote*>;
-template class linkedList<stack<Pacote*>*>;
+template class linkedList<Secao*>;
