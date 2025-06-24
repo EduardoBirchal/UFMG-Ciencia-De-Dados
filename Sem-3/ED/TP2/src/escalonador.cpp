@@ -2,12 +2,15 @@
 #include <stdexcept> // Para std::invalid_argument e std::overflow_error
 
 // Construtor
-Escalonador::Escalonador(int maxEventos, int numPacotes, int latencia, int intervalo) 
+Escalonador::Escalonador(int maxEventos, int numPacotes, int latencia, int intervalo, Rede* r) 
     : filaDeEventos(maxEventos),
+      rede(r),
       numPacotes(numPacotes),
       latenciaTransporte(latencia),
       intervaloTransportes(intervalo) {
-    // Corpo vazio, inicialização feita na lista de inicializadores
+    if (!rede) {
+        throw std::invalid_argument("Ponteiro de rede nao pode ser nulo");
+    }
 }
 
 // Destrutor
@@ -17,6 +20,11 @@ Escalonador::~Escalonador() {
         EventoPtr eventoPtr = filaDeEventos.extractMin();
         delete eventoPtr.ptr; // Libera a memória do evento
     }
+}
+
+// Retorna ponteiro para a rede
+Rede* Escalonador::getRede() const {
+    return this->rede;
 }
 
 // Calcula a chave de prioridade para um evento
@@ -46,7 +54,7 @@ unsigned long long int Escalonador::calcularChave(const Evento& evento) const {
     }
 }
 
-// A implementação de 'agendar' foi movida para o .hpp por ser um template
+// A implementação de 'agendar' está no .hpp por ser um template
 
 // Retorna um ponteiro para o próximo evento da fila (sem remover)
 Evento* Escalonador::proximo() const {
