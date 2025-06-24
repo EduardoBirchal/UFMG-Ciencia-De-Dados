@@ -11,8 +11,12 @@ Escalonador::Escalonador(int maxEventos, int numPacotes, int latencia, int inter
 }
 
 // Destrutor
+// Precisa liberar a memória de todos os eventos criados com 'new'
 Escalonador::~Escalonador() {
-    // Corpo vazio, MinHeap gerencia sua própria memória
+    while (!filaDeEventos.isEmpty()) {
+        EventoPtr eventoPtr = filaDeEventos.extractMin();
+        delete eventoPtr.ptr; // Libera a memória do evento
+    }
 }
 
 // Calcula a chave de prioridade para um evento
@@ -42,30 +46,23 @@ unsigned long long int Escalonador::calcularChave(const Evento& evento) const {
     }
 }
 
-// Agenda um novo evento
-void Escalonador::agendar(TipoEvento tipo, Pacote* pacote, int idOrigem, int idDestino, int idSecao, int horaAgendada) {
-    if (!pacote) {
-        throw std::invalid_argument("Ponteiro de pacote nao pode ser nulo ao agendar");
+// A implementação de 'agendar' foi movida para o .hpp por ser um template
+
+// Retorna um ponteiro para o próximo evento da fila (sem remover)
+Evento* Escalonador::proximo() const {
+    if (filaDeEventos.isEmpty()) {
+        throw std::out_of_range("Fila de eventos vazia");
     }
-    
-    // Cria um evento com uma chave temporária (0)
-    Evento novoEvento(0, tipo, pacote, idOrigem, idDestino, idSecao, horaAgendada);
-    
-    // Calcula a chave correta e a atribui ao evento
-    novoEvento.chave = this->calcularChave(novoEvento);
-    
-    // Insere o evento com a chave correta na fila
-    filaDeEventos.insert(novoEvento);
+    return filaDeEventos.getMin().ptr;
 }
 
-// Retorna o próximo evento da fila (sem remover)
-Evento Escalonador::proximo() const {
-    return filaDeEventos.getMin();
-}
-
-// Remove e retorna o próximo evento da fila
-Evento Escalonador::processarProximo() {
-    return filaDeEventos.extractMin();
+// Remove e retorna um ponteiro para o próximo evento da fila
+Evento* Escalonador::processarProximo() {
+    if (filaDeEventos.isEmpty()) {
+        throw std::out_of_range("Fila de eventos vazia");
+    }
+    // O chamador deste método se torna responsável por deletar o ponteiro retornado
+    return filaDeEventos.extractMin().ptr;
 }
 
 // Verifica se a fila de eventos está vazia
