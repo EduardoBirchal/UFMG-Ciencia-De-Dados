@@ -42,12 +42,8 @@ int main() {
     escalonador.agendar<EventoPostagem>(p1, p1->getOrigem(), p1->getDestinoFinal(), 0, p1->getHoraPostagem());
     escalonador.agendar<EventoPostagem>(p2, p2->getOrigem(), p2->getDestinoFinal(), 0, p2->getHoraPostagem());
     escalonador.agendar<EventoPostagem>(p3, p3->getOrigem(), p3->getDestinoFinal(), 0, p3->getHoraPostagem());
-
-    // Agendamento do PRIMEIRO evento de transporte global, que se auto-propaga
-    std::cout << "Agendando o primeiro evento de transporte global...\n";
-    escalonador.agendar<EventoAcionarTransporte>(nullptr, 0, 0, 0, intervalo_transportes);
     
-    std::cout << num_pacotes << " pacotes postados e ciclo de transportes iniciado.\n\n";
+    std::cout << num_pacotes << " pacotes postados.\n\n";
 
     // 5. Loop Principal da Simulação
     std::cout << "--- Iniciando a Simulacao ---\n\n";

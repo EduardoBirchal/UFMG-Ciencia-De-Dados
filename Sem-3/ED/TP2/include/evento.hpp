@@ -91,6 +91,14 @@ public:
     void simular() override;
 };
 
+// NOVO: Evento para acionar a lógica de encaminhamento de um armazém específico
+class EventoAcionarArmazem : public Evento {
+public:
+    EventoAcionarArmazem(unsigned long long int c, Pacote* p, int origem, int destino, int secao, int hora, Escalonador* esc);
+    void imprimir() override;
+    void simular() override;
+};
+
 
 // Wrapper para ponteiros de Evento, para o MinHeap comparar corretamente
 struct EventoPtr {

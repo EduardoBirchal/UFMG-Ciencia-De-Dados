@@ -6,6 +6,13 @@
 #include "rede.hpp"
 #include <type_traits> // Para std::is_base_of
 
+// MUDANÇA: Enum para os níveis de prioridade dos eventos
+enum class Prioridade {
+    ALTA = 0,
+    MEDIA = 1,
+    NORMAL = 2
+};
+
 // Gerencia uma fila de eventos baseada em MinHeap
 class Escalonador {
 private:
@@ -15,9 +22,10 @@ private:
     int latenciaTransporte;
     int intervaloTransportes;
     int horaAtual;
+    bool primeiroTransporteAgendado;
 
-    // Calcula a chave de prioridade para um evento
-    unsigned long long int calcularChave(const Evento& evento) const;
+    // MUDANÇA: O cálculo da chave agora considera a prioridade
+    unsigned long long int calcularChave(const Evento& evento, Prioridade prioridade) const;
 
 public:
     // Construtor
@@ -26,9 +34,9 @@ public:
     // Destrutor
     ~Escalonador();
 
-    // Agenda um novo evento de qualquer tipo que herde de Evento
+    // MUDANÇA: O método agendar agora aceita um parâmetro de prioridade
     template<typename T>
-    void agendar(Pacote* pacote, int idOrigem, int idDestino, int idSecao, int horaAgendada);
+    void agendar(Pacote* pacote, int idOrigem, int idDestino, int idSecao, int horaAgendada, Prioridade prioridade = Prioridade::NORMAL);
 
     // Retorna o próximo evento (sem remover)
     Evento* proximo() const;
@@ -53,24 +61,23 @@ public:
 
     // Retorna o intervalo entre transportes
     int getIntervaloTransportes() const;
+
+    bool foiPrimeiroTransporteAgendado() const;
+    void marcarPrimeiroTransporteAgendado();
 };
 
 
 // --- Implementação do Template Agendar ---
 template<typename T>
-void Escalonador::agendar(Pacote* pacote, int idOrigem, int idDestino, int idSecao, int horaAgendada) {
-    // Garante que T herda de Evento
+void Escalonador::agendar(Pacote* pacote, int idOrigem, int idDestino, int idSecao, int horaAgendada, Prioridade prioridade) {
     static_assert(std::is_base_of<Evento, T>::value, "T deve ser uma classe derivada de Evento");
 
-    // Cria evento do tipo T com chave temporária (0) e passa o ponteiro do escalonador ('this')
     Evento* novoEvento = new T(0, pacote, idOrigem, idDestino, idSecao, horaAgendada, this);
     
-    // Calcula e define a chave correta no evento recém-criado
-    unsigned long long int novaChave = this->calcularChave(*novoEvento);
-
+    // MUDANÇA: A prioridade é passada para o cálculo da chave
+    unsigned long long int novaChave = this->calcularChave(*novoEvento, prioridade);
     novoEvento->setChave(novaChave);
 
-    // Insere o evento na fila de prioridade
     filaDeEventos.insert({novoEvento});
 }
 
