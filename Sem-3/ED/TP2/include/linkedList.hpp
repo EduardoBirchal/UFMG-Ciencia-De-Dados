@@ -74,6 +74,9 @@ public:
     // Adiciona na cauda
     void addToTail(T data);
 
+    // NOVO: Adiciona em ordem
+    void addOrdered(T data);
+
     // Remove por índice
     bool remove(int index);
 
@@ -145,6 +148,30 @@ void linkedList<T>::addToTail(T data) {
     }
     size++;
 }
+
+// CORREÇÃO FINAL: Adiciona em ordem, desreferenciando ponteiros para a comparação.
+// Isto assume que se T é um ponteiro, o tipo para o qual ele aponta tem o operator< definido.
+template<class T>
+void linkedList<T>::addOrdered(T data) {
+    listNode<T>* newNode = new listNode<T>(data);
+
+    // Caso 1: Lista está vazia ou o novo elemento é o menor de todos.
+    // O operador * desreferencia o ponteiro para comparar os valores dos IDs.
+    if (isEmpty() || *data < *(head->getData())) {
+        newNode->setNext(head);
+        head = newNode;
+    } else {
+        // Caso 2: Percorre a lista para encontrar o local correto de inserção.
+        listNode<T>* current = head;
+        while (current->getNext() != nullptr && *(current->getNext()->getData()) < *data) {
+            current = current->getNext();
+        }
+        newNode->setNext(current->getNext());
+        current->setNext(newNode);
+    }
+    size++;
+}
+
 
 // Pega o nó em um índice
 template<class T>

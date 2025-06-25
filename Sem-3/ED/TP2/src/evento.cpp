@@ -97,28 +97,62 @@ void EventoAcionarTransporte::simular() {
         Armazem* armazem = rede->getArmazemPeloIndice(i);
         if (armazem && !armazem->secoesVazias()) {
             algumArmazemNaoVazio = true;
-            // MUDANÇA: Agendamento com PRIORIDADE MÉDIA
-            escalonador->agendar<EventoAcionarArmazem>(nullptr, 0, armazem->getID(), 0, horaAgendada, Prioridade::MEDIA);
+            // MUDANÇA: Agenda com prioridade ARMAZEM
+            escalonador->agendar<EventoAcionarArmazem>(nullptr, 0, armazem->getID(), 0, horaAgendada, Prioridade::ARMAZEM);
         }
     }
     
     if (algumArmazemNaoVazio) {
         int proximaHora = this->horaAgendada + escalonador->getIntervaloTransportes();
-        // Agendamento com prioridade NORMAL (padrão)
-        escalonador->agendar<EventoAcionarTransporte>(nullptr, 0, 0, 0, proximaHora);
+        escalonador->agendar<EventoAcionarTransporte>(nullptr, 0, 0, 0, proximaHora, Prioridade::NORMAL);
     }
 }
 
 // --- EventoAcionarArmazem ---
 EventoAcionarArmazem::EventoAcionarArmazem(unsigned long long int c, Pacote* p, int origem, int destino, int secao, int hora, Escalonador* esc) : Evento(c, p, origem, destino, secao, hora, esc) { valorTipo = 2; }
-void EventoAcionarArmazem::imprimir() { printHora(horaAgendada); std::cout << " acionando processamento do armazem "; printID(idDestino); std::cout << "\n"; }
+void EventoAcionarArmazem::imprimir() {}
 void EventoAcionarArmazem::simular() {
     if (!escalonador) return;
     Rede* rede = escalonador->getRede();
     if (!rede) return;
+    
     Armazem* armazemAlvo = rede->getArmazem(this->idDestino);
     if (armazemAlvo) {
-        imprimir();
-        armazemAlvo->encaminharPacotes(this->horaAgendada);
+        // MUDANÇA: Encontra a PRIMEIRA seção não-vazia e agenda um evento para ela.
+        int primeiraSecao = armazemAlvo->findProximaSecaoNaoVazia(-1);
+        if (primeiraSecao != -1) {
+            escalonador->agendar<EventoAcionarSecao>(nullptr, this->idDestino, 0, primeiraSecao, horaAgendada, Prioridade::SECAO);
+        }
+    }
+}
+
+// --- EventoAcionarSecao (NOVO) ---
+EventoAcionarSecao::EventoAcionarSecao(unsigned long long int c, Pacote* p, int origem, int destino, int secao, int hora, Escalonador* esc) : Evento(c, p, origem, destino, secao, hora, esc) { valorTipo = 2; }
+
+void EventoAcionarSecao::imprimir() {
+    printHora(horaAgendada);
+    std::cout << " acionando processamento do armazem ";
+    printID(idOrigem);
+    std::cout << " secao ";
+    printID(idSecao);
+    std::cout << "\n";
+}
+
+void EventoAcionarSecao::simular() {
+    if (!escalonador) return;
+    Rede* rede = escalonador->getRede();
+    if (!rede) return;
+
+    Armazem* armazemAlvo = rede->getArmazem(this->idOrigem); // O armazém está no idOrigem
+    if (armazemAlvo) {
+        // 1. Processa a seção atual, agendando eventos com Prioridade::ALTA
+        armazemAlvo->processarEncaminhamentoSecao(this->idSecao, this->horaAgendada);
+
+        // 2. Procura a PRÓXIMA seção não-vazia para continuar a cadeia
+        int proximaSecao = armazemAlvo->findProximaSecaoNaoVazia(this->idSecao);
+        if (proximaSecao != -1) {
+            // 3. Agenda um evento para a próxima seção com Prioridade::SECAO
+            escalonador->agendar<EventoAcionarSecao>(nullptr, this->idOrigem, 0, proximaSecao, this->horaAgendada, Prioridade::SECAO);
+        }
     }
 }

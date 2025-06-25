@@ -1,57 +1,86 @@
 #include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <vector>
+
 #include "escalonador.hpp"
 #include "rede.hpp"
 #include "pacote.hpp"
 #include "evento.hpp"
 #include "armazem.hpp"
 
-int main() {
-    // 1. Parâmetros da Simulação
-    int max_transporte = 2;
-    int latencia_transporte = 20;
-    int intervalo_transportes = 110; 
-    int custo_remocao = 1;
-    int num_armazens = 4;
+int main(int argc, char* argv[]) {
+    // 1. Validação dos Argumentos de Linha de Comando
+    if (argc != 2) {
+        std::cerr << "Uso: " << argv[0] << " <arquivo.wkl>" << std::endl;
+        return 1;
+    }
+
+    // 2. Abertura e Validação do Arquivo de Entrada
+    std::ifstream inputFile(argv[1]);
+    if (!inputFile.is_open()) {
+        std::cerr << "Erro: Nao foi possivel abrir o arquivo " << argv[1] << std::endl;
+        return 1;
+    }
+
+    // 3. Leitura dos Parâmetros da Simulação
+    int capacidade_transporte, latencia_transporte, intervalo_transportes, custo_remocao, num_armazens, num_pacotes;
     
-    int num_pacotes = 3;
-    int max_eventos = 2 * num_pacotes; 
+    inputFile >> capacidade_transporte >> latencia_transporte >> intervalo_transportes >> custo_remocao >> num_armazens;
 
-    // 2. Inicialização do Sistema
-    Rede rede(num_armazens, max_transporte, custo_remocao);
-    Escalonador escalonador(max_eventos, num_pacotes, latencia_transporte, intervalo_transportes, &rede);
+    // 4. Inicialização do Sistema com os Parâmetros Lidos
+    int max_eventos = num_armazens * 1000; 
 
-    // 3. Configuração da Rede
-    std::cout << "--- Configurando a Rede de Armazens ---\n";
+    Rede rede(num_armazens, capacidade_transporte, custo_remocao);
+    Escalonador escalonador(max_eventos, 0, latencia_transporte, intervalo_transportes, &rede);
+
+    // 5. Configuração da Rede de Armazéns
     for (int i = 0; i < num_armazens; ++i) {
         rede.addArmazem(i);
     }
-    rede.addConexao(0, 1);
-    rede.addConexao(1, 2);
-    rede.addConexao(1, 3);
-    std::cout << "Rede criada com " << num_armazens << " armazens.\n\n";
 
-    // 4. Agendamento de Postagens e Transportes
-    std::cout << "--- Agendando Eventos Iniciais ---\n";
+    int conexao;
+    for (int i = 0; i < num_armazens; ++i) {
+        for (int j = 0; j < num_armazens; ++j) {
+            inputFile >> conexao;
+            if (conexao == 1 && j > i) {
+                rede.addConexao(i, j);
+            }
+        }
+    }
     
-    // Pacotes
-    Pacote* p1 = new Pacote(10, 1101, 0, 2, 0); // De 0 para 2
-    Pacote* p2 = new Pacote(15, 1102, 3, 0, 1); // De 1 para 3
-    Pacote* p3 = new Pacote(20, 1103, 2, 3, 2); // De 3 para 0
-    
-    // Agendamento de postagens
-    escalonador.agendar<EventoPostagem>(p1, p1->getOrigem(), p1->getDestinoFinal(), 0, p1->getHoraPostagem());
-    escalonador.agendar<EventoPostagem>(p2, p2->getOrigem(), p2->getDestinoFinal(), 0, p2->getHoraPostagem());
-    escalonador.agendar<EventoPostagem>(p3, p3->getOrigem(), p3->getDestinoFinal(), 0, p3->getHoraPostagem());
-    
-    std::cout << num_pacotes << " pacotes postados.\n\n";
+    inputFile >> num_pacotes;
 
-    // 5. Loop Principal da Simulação
-    std::cout << "--- Iniciando a Simulacao ---\n\n";
+    // 6. Leitura e Agendamento dos Pacotes
+    std::string line;
+    int pacote_id_counter = 0;
+    std::getline(inputFile, line); // Consome a quebra de linha após o número de pacotes
+
+    while (pacote_id_counter < num_pacotes && std::getline(inputFile, line)) {
+        if (line.empty()) continue;
+
+        std::stringstream ss(line);
+        int hora_postagem, id_entrada, id_origem, id_destino_final;
+        std::string dummy;
+
+        // CORREÇÃO: Lógica de parsing simplificada para corresponder ao formato do arquivo.
+        // Formato esperado: "10 pac 1101 org 0 dst 2"
+        ss >> hora_postagem >> dummy >> id_entrada >> dummy >> id_origem >> dummy >> id_destino_final;
+        
+        Pacote* p = new Pacote(hora_postagem, id_entrada, id_origem, id_destino_final, pacote_id_counter);
+        escalonador.agendar<EventoPostagem>(p, p->getOrigem(), p->getDestinoFinal(), 0, p->getHoraPostagem());
+        
+        pacote_id_counter++;
+    }
+    
+    // CHAMADA DA FUNÇÃO DE TESTE para ver o estado antes da simulação começar
+    // imprimirEstadoDaRede(rede); // Descomente para depuração
+
+    // 7. Loop Principal da Simulação
     while (!escalonador.vazio()) {
         escalonador.simularProximo();
     }
-
-    std::cout << "\n--- Simulacao Concluida ---\n";
 
     return 0;
 }

@@ -6,11 +6,12 @@
 #include "rede.hpp"
 #include <type_traits> // Para std::is_base_of
 
-// MUDANÇA: Enum para os níveis de prioridade dos eventos
+// MUDANÇA: Hierarquia de prioridades expandida para 4 níveis
 enum class Prioridade {
-    ALTA = 0,
-    MEDIA = 1,
-    NORMAL = 2
+    ALTA = 0,     // Para eventos de envio/rearmazenamento de pacotes
+    SECAO = 1,    // Para o evento que aciona o processamento de uma seção
+    ARMAZEM = 2,  // Para o evento que inicia o processamento de um armazém
+    NORMAL = 3    // Para todos os outros eventos (chegadas, postagens, etc.)
 };
 
 // Gerencia uma fila de eventos baseada em MinHeap

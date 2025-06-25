@@ -58,9 +58,22 @@ public:
     // Verifica se todas as seções do armazém estão vazias
     bool secoesVazias() const;
 
+    // MUDANÇA: Novo método público para processar uma única seção
+    void processarEncaminhamentoSecao(int id_secao, int horaAtual);
+
+    // MUDANÇA: Novo método público para encontrar a próxima seção com pacotes
+    int findProximaSecaoNaoVazia(int idSecaoAnterior) const;
+
+    // NOVO: Imprime os IDs de todas as seções do armazém
+    void imprimirSecoes() const;
+
     // Getters
     int getID() const;
     int getNumSecoes() const;
+
+    // NOVO: Retorna uma referência constante para a lista de seções.
+    // Permite a leitura do estado das seções sem permitir modificações externas.
+    const linkedList<Secao*>& getSecoes() const { return secoes; }
 };
 
 #endif // ARMAZEM_HPP

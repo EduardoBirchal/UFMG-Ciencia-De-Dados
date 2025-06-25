@@ -35,7 +35,7 @@ unsigned long long int Escalonador::calcularChave(const Evento& evento, Priorida
     }
     
     unsigned long long int parteHora = static_cast<unsigned long long int>(evento.horaAgendada) * 1000000000ULL;
-    unsigned long long int partePrioridade = static_cast<unsigned long long int>(prioridade) * 100000000ULL;
+    unsigned long long int partePrioridade = static_cast<unsigned long long int>(prioridade) * 10000000000ULL;
     unsigned long long int parteDetalhes;
 
     if (evento.valorTipo == 2) { // Eventos de sistema/entrega
