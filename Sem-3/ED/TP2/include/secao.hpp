@@ -10,8 +10,8 @@ struct Secao {
     stack<Pacote*> pilha;
 
     // Construtor
-    // A pilha é inicializada com 'true' para gerenciar a memória dos ponteiros de Pacote
-    Secao(int secao_id) : id(secao_id), pilha(true) {}
+    // A pilha é inicializada com 'false' para que os pacotes não sejam deletados
+    Secao(int secao_id) : id(secao_id), pilha(false) {}
 };
 
 #endif // SECAO_HPP

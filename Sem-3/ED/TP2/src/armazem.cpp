@@ -1,10 +1,18 @@
 #include "armazem.hpp"
+#include "escalonador.hpp" // Para poder chamar o método agendar()
+#include "evento.hpp"      // Para poder agendar eventos
 #include <stdexcept>
 
-// Construtor: um armazém agora começa com 0 seções
-Armazem::Armazem(int id_armazem) 
-    : id(id_armazem), secoes(true) { // 'true' para que a lista delete os ponteiros de Secao
-    // Nenhuma seção é criada inicialmente
+// Construtor
+Armazem::Armazem(int id_armazem, int custo_remocao, Escalonador* esc) 
+    : id(id_armazem), 
+      custoRemocao(custo_remocao),
+      escalonador(esc),
+      secoes(true), 
+      pilhaAuxiliar(false) {
+    if (!escalonador) {
+        throw std::invalid_argument("Ponteiro do escalonador nao pode ser nulo no Armazem");
+    }
 }
 
 // Destrutor
@@ -14,71 +22,150 @@ Armazem::~Armazem() {
 
 // Método auxiliar privado para encontrar ou criar uma seção
 Secao* Armazem::findOrCreateSecao(int id_secao) {
-    // Procura por uma seção existente com o ID fornecido
-    for (int i = 0; i < secoes.getSize(); ++i) {
-        Secao* secao_atual = secoes.readIndex(i);
-        if (secao_atual->id == id_secao) {
-            return secao_atual; // Retorna a seção encontrada
-        }
+    Secao* secao = findSecao(id_secao);
+    if (secao) {
+        return secao;
     }
-
     // Se não encontrou, cria uma nova seção
     Secao* nova_secao = new Secao(id_secao);
     secoes.addToTail(nova_secao);
     return nova_secao; // Retorna a seção recém-criada
 }
 
+// Método auxiliar privado para encontrar uma seção
+Secao* Armazem::findSecao(int id_secao) const {
+    for (int i = 0; i < secoes.getSize(); ++i) {
+        Secao* secao_atual = secoes.readIndex(i);
+        if (secao_atual->id == id_secao) {
+            return secao_atual;
+        }
+    }
+    return nullptr; // Não encontrou
+}
+
 
 // Adiciona uma nova seção com um ID específico
 void Armazem::addSecao(int id_secao) {
-    // Apenas chama o método auxiliar, que fará o trabalho
     findOrCreateSecao(id_secao);
 }
 
 
 // Adiciona um pacote a sua seção designada
-void Armazem::adicionarPacote(Pacote* pacote) {
-    // Atualiza a localização atual e o estado do pacote
+void Armazem::adicionarPacote(Pacote* pacote, int id_secao_alvo) {
     pacote->setArmazemAtual(this->id);
     pacote->setEstado(EstadoPacote::armazenado);
-
-    // Faz o pacote determinar seu próximo destino na rota
-    pacote->atualizarDestinoAtual();
-
-    // Encontra a seção correspondente ao próximo destino ou cria uma nova
-    int id_secao_alvo = pacote->getDestinoAtual();
-    Secao* secao_alvo = findOrCreateSecao(id_secao_alvo);
-
-    // Atualiza a seção atual do pacote e o armazena
+    // A atualização da rota agora é responsabilidade do evento
+    Secao* secao = findOrCreateSecao(id_secao_alvo);
     pacote->setSecaoAtual(id_secao_alvo);
-    secao_alvo->pilha.push(pacote);
+    secao->pilha.push(pacote);
 }
 
 // Remove um pacote do topo de uma seção
 Pacote* Armazem::removerPacote(int id_secao) {
-    // Procura pela seção
-    for (int i = 0; i < secoes.getSize(); ++i) {
-        Secao* secao_atual = secoes.readIndex(i);
-        if (secao_atual->id == id_secao) {
-            if (secao_atual->pilha.isEmpty()) {
-                return nullptr; // Seção encontrada, mas vazia
-            }
-            return secao_atual->pilha.pop();
+    Secao* secao = findSecao(id_secao);
+    if (secao) {
+        if (secao->pilha.isEmpty()) {
+            return nullptr; 
         }
+        return secao->pilha.pop();
     }
-    
-    // Se a seção não for encontrada, lança uma exceção
     throw std::out_of_range("ID de secao nao encontrado neste armazem");
 }
 
-// Retorna o ID do armazém
+// Esvazia uma seção e agenda o anúncio de suas remoções
+int Armazem::realocarSecao(int id_secao, int horaInicial) {
+    Secao* secao = findSecao(id_secao);
+    if (!secao) return horaInicial;
+
+    int i = 1;
+    while(!secao->pilha.isEmpty()) {
+        Pacote* pacote = secao->pilha.pop();
+        this->pilhaAuxiliar.push(pacote);
+        int horaAgendada = horaInicial + (i * this->custoRemocao);
+
+        Evento::printHora(horaAgendada);
+        std::cout << " pacote ";
+        Evento::printID(pacote->getID());
+        std::cout << " removido de ";
+        Evento::printID(this->getID());
+        std::cout << " na secao ";
+        Evento::printID(id_secao);
+        std::cout << "\n";
+        
+        i++;
+    }
+    // Retorna a hora em que a realocação termina
+    return horaInicial + ((i-1) * this->custoRemocao);
+}
+
+// Agenda o envio dos pacotes da pilha auxiliar
+void Armazem::encaminhaPilhaAuxiliar(int horaAtual) {
+    if (!escalonador) return;
+    
+    Rede* rede = escalonador->getRede();
+    if (!rede) return;
+    int capacidadeTransporte = rede->getMaxTransporte();
+
+    // Loop 1: agenda envio dos pacotes que devem sair
+    for (int i = 0; i < capacidadeTransporte && !pilhaAuxiliar.isEmpty(); ++i) {
+        Pacote* pacote = popAuxiliar(); 
+        if(pacote){
+            escalonador->agendar<EventoEnviarPacote>(pacote, this->id, pacote->getDestinoAtual(), 0, horaAtual);
+        }
+    }
+
+    // Loop 2: agenda rearmazenamento dos pacotes que ficam
+    while (!pilhaAuxiliar.isEmpty()) {
+        Pacote* pacote = popAuxiliar(); 
+        if (pacote) {
+            escalonador->agendar<EventoRearmazenamento>(pacote, this->id, 0, pacote->getSecaoAtual(), horaAtual);
+            adicionarPacote(pacote, pacote->getSecaoAtual());
+        }
+    }
+}
+
+// Processa todas as seções não-vazias para encaminhamento
+void Armazem::encaminharPacotes(int horaAtual) {
+    if (!escalonador) return;
+    Rede* rede = escalonador->getRede();
+    if (!rede) return;
+
+    for (int i = 0; i < secoes.getSize(); ++i) {
+        Secao* secao = secoes.readIndex(i);
+        if (secao && !secao->pilha.isEmpty()) {
+            int novaHora = realocarSecao(secao->id, horaAtual);
+            encaminhaPilhaAuxiliar(novaHora);
+        }
+    }
+}
+
+// Verifica se todas as seções do armazém estão vazias
+bool Armazem::secoesVazias() const {
+    for (int i = 0; i < secoes.getSize(); ++i) {
+        Secao* secao_atual = secoes.readIndex(i);
+        if (secao_atual && !secao_atual->pilha.isEmpty()) {
+            return false; // Encontrou uma seção com pacotes, retorna falso
+        }
+    }
+    return true; // Se o loop terminar, todas as seções estão vazias
+}
+
+// Getters
 int Armazem::getID() const {
     return this->id;
 }
-
-// Retorna o número de seções no armazém
 int Armazem::getNumSecoes() const {
     return secoes.getSize();
+}
+Pacote* Armazem::popAuxiliar() {
+    if (pilhaAuxiliar.isEmpty()) return nullptr;
+    return pilhaAuxiliar.pop();
+}
+void Armazem::transfereParaAuxiliar(int id_secao) {
+    Pacote* pacote = removerPacote(id_secao);
+    if (pacote) {
+        this->pilhaAuxiliar.push(pacote);
+    }
 }
 
 // --- Instanciação Explícita de Template ---

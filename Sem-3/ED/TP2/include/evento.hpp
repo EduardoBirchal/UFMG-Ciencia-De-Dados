@@ -1,35 +1,28 @@
 #ifndef EVENTO_HPP
 #define EVENTO_HPP
 
+#include <iostream>
+#include <iomanip>
+#include <string>
 #include "pacote.hpp"
 
 // Declaração antecipada para quebrar a dependência circular com Escalonador
 class Escalonador; 
 
-// Enum para os diferentes tipos de evento no sistema
-enum TipoEvento {
-    Postagem,
-    Armazenamento,
-    Remocao,
-    Transporte,
-    PilhaAuxiliar,
-    Entrega
-};
-
 // Classe de evento base, agora virtual
 class Evento {
 public:
     unsigned long long int chave; 
-    TipoEvento tipo;              
     Pacote* pacote;                
     int idOrigem;
     int idDestino;
     int idSecao;
     int horaAgendada;
+    int valorTipo; // Último dígito da chave
     Escalonador* escalonador;
 
     // Construtor
-    Evento(unsigned long long int c, TipoEvento t, Pacote* p, int origem, int destino, int secao, int hora, Escalonador* esc);
+    Evento(unsigned long long int c, Pacote* p, int origem, int destino, int secao, int hora, Escalonador* esc);
 
     // Destrutor virtual para permitir herança segura
     virtual ~Evento() = default;
@@ -42,27 +35,59 @@ public:
 
     // Método de simulação, a ser sobrescrito por classes filhas
     virtual void simular();
+
+    // Faz o log do evento
+    virtual void imprimir();
+
+    // Imprime a hora, com dígitos à esquerda
+    static void printHora(unsigned long long int hora);
+
+    // Imprime o ID, com dígitos à esquerda
+    static void printID(int id);
 };
 
 // --- Herdeiros de Evento ---
 
-// Evento que representa a postagem inicial de um pacote na rede
 class EventoPostagem : public Evento {
 public:
-    // Construtor que repassa os argumentos para a classe base Evento
-    EventoPostagem(unsigned long long int c, TipoEvento t, Pacote* p, int origem, int destino, int secao, int hora, Escalonador* esc);
-
-    // Sobrescreve o método de simulação
+    EventoPostagem(unsigned long long int c, Pacote* p, int origem, int destino, int secao, int hora, Escalonador* esc);
+    void imprimir() override;
     void simular() override;
 };
 
-// Evento que representa a chegada de um pacote em um armazém para ser armazenado
 class EventoArmazenamento : public Evento {
 public:
-    // Construtor que repassa os argumentos para a classe base Evento
-    EventoArmazenamento(unsigned long long int c, TipoEvento t, Pacote* p, int origem, int destino, int secao, int hora, Escalonador* esc);
+    EventoArmazenamento(unsigned long long int c, Pacote* p, int origem, int destino, int secao, int hora, Escalonador* esc);
+    void imprimir() override;
+    void simular() override;
+};
 
-    // Sobrescreve o método de simulação
+class EventoEnviarPacote : public Evento {
+public:
+    EventoEnviarPacote(unsigned long long int c, Pacote* p, int origem, int destino, int secao, int hora, Escalonador* esc);
+    void imprimir() override;
+    void simular() override;
+};
+
+class EventoRearmazenamento : public Evento {
+public:
+    EventoRearmazenamento(unsigned long long int c, Pacote* p, int origem, int destino, int secao, int hora, Escalonador* esc);
+    void imprimir() override;
+    void simular() override;
+};
+
+class EventoEntrega : public Evento {
+public:
+    EventoEntrega(unsigned long long int c, Pacote* p, int origem, int destino, int secao, int hora, Escalonador* esc);
+    void imprimir() override;
+    void simular() override;
+};
+
+// Evento para acionar a lógica de transporte de um armazém
+class EventoAcionarTransporte : public Evento {
+public:
+    EventoAcionarTransporte(unsigned long long int c, Pacote* p, int origem, int destino, int secao, int hora, Escalonador* esc);
+    void imprimir() override;
     void simular() override;
 };
 
@@ -70,8 +95,6 @@ public:
 // Wrapper para ponteiros de Evento, para o MinHeap comparar corretamente
 struct EventoPtr {
     Evento* ptr;
-
-    // Compara os eventos pela chave, não pelo endereço do ponteiro
     bool operator<(const EventoPtr& outro) const {
         return this->ptr->chave < outro.ptr->chave;
     }

@@ -1,11 +1,12 @@
 #include "pacote.hpp"
 
 // Construtor atualizado
-Pacote::Pacote(int id_pacote, int hora_postagem, int id_origem, int id_destino_final) : 
-    id(id_pacote), 
+Pacote::Pacote(int hora_postagem, int id_entrada, int id_origem, int id_destino_final, int id_sequencial) : 
     horaPostagem(hora_postagem),
+    idEntrada(id_entrada), 
     idOrigem(id_origem),
     idDestinoFinal(id_destino_final),
+    idSequencial(id_sequencial),
     idDestinoAtual(id_origem),
     idArmazemAtual(id_origem),
     idSecaoAtual(0),
@@ -19,9 +20,14 @@ Pacote::~Pacote() {
     // Nada a fazer
 }
 
-// Retorna o ID
+// Retorna o ID sequencial
 int Pacote::getID() const {
-    return this->id;
+    return this->idSequencial;
+}
+
+// Retorna o ID recebido na entrada
+int Pacote::getIDEntrada() const {
+    return this->idEntrada;
 }
 
 // Retorna a hora da postagem

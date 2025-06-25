@@ -81,14 +81,14 @@ public:
     T& readHead();
 
     // Lê em um índice
-    T& readIndex(int index);
+    T& readIndex(int index) const;
 
     // Retorna o índice de um valor
     int findIndexByValue(const T& value) const;
 
 private:
     // Pega o nó em um índice
-    listNode<T>* getNode(int index);
+    listNode<T>* getNode(int index) const;
 };
 
 // Construtor
@@ -148,7 +148,7 @@ void linkedList<T>::addToTail(T data) {
 
 // Pega o nó em um índice
 template<class T>
-listNode<T>* linkedList<T>::getNode(int index) {
+listNode<T>* linkedList<T>::getNode(int index) const {
     if (isEmpty() || index < 0 || index >= size) {
         throw std::out_of_range("Indice invalido ou lista vazia");
     }
@@ -197,7 +197,7 @@ T& linkedList<T>::readHead() {
 
 // Lê em um índice
 template<class T>
-T& linkedList<T>::readIndex(int index) {
+T& linkedList<T>::readIndex(int index) const {
     return getNode(index)->getData();
 }
 

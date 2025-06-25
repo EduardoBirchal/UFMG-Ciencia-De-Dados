@@ -16,7 +16,8 @@ enum EstadoPacote {
 
 class Pacote {
 private:
-    int id;
+    int idSequencial;   // ID gerado pelo programa
+    int idEntrada;      // ID recebido na entrada
     int horaPostagem;
     int idOrigem;
     int idDestinoFinal;
@@ -31,13 +32,14 @@ private:
 
 public:
     // Construtor atualizado
-    Pacote(int id_pacote, int hora_postagem, int id_origem, int id_destino_final);
+    Pacote(int hora_postagem, int id_entrada, int id_origem, int id_destino_final, int id_sequencial);
 
     // Destrutor
     ~Pacote();
 
     // --- Getters ---
     int getID() const;
+    int getIDEntrada() const;
     int getHoraPostagem() const;
     int getOrigem() const;
     int getDestinoFinal() const;

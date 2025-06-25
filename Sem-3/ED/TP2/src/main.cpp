@@ -1,86 +1,61 @@
 #include <iostream>
-#include "minheap.hpp"
-
-// Função para imprimir o estado do heap
-void printHeapStatus(MinHeap<int>& heap) {
-    std::cout << "Tamanho atual do heap: " << heap.getSize() << std::endl;
-    if (!heap.isEmpty()) {
-        std::cout << "Menor elemento (getMin): " << heap.getMin() << std::endl;
-    } else {
-        std::cout << "O heap esta vazio." << std::endl;
-    }
-    std::cout << "----------------------------------------" << std::endl;
-}
+#include "escalonador.hpp"
+#include "rede.hpp"
+#include "pacote.hpp"
+#include "evento.hpp"
+#include "armazem.hpp"
 
 int main() {
-    std::cout << "--- Iniciando Teste do MinHeap ---" << std::endl;
-
-    // 1. Cria um MinHeap com capacidade para 10 inteiros
-    MinHeap<int> heap(10);
-    std::cout << "Heap criado com capacidade para " << heap.getCapacity() << " elementos." << std::endl;
-    printHeapStatus(heap);
-
-    // 2. Insere elementos no heap
-    std::cout << "\n--- Teste de Insercao ---" << std::endl;
-    heap.insert(10);
-    std::cout << "Inserido: 10" << std::endl;
-    printHeapStatus(heap);
-
-    heap.insert(4);
-    std::cout << "Inserido: 4" << std::endl;
-    printHeapStatus(heap);
-
-    heap.insert(15);
-    std::cout << "Inserido: 15" << std::endl;
-    printHeapStatus(heap);
-
-    heap.insert(20);
-    std::cout << "Inserido: 20" << std::endl;
-    printHeapStatus(heap);
+    // 1. Parâmetros da Simulação
+    int max_transporte = 2;
+    int latencia_transporte = 20;
+    int intervalo_transportes = 110; 
+    int custo_remocao = 1;
+    int num_armazens = 4;
     
-    heap.insert(1);
-    std::cout << "Inserido: 1" << std::endl;
-    printHeapStatus(heap);
+    int num_pacotes = 3;
+    int max_eventos = 2 * num_pacotes; 
 
-    // 3. Testa a extração do mínimo
-    std::cout << "\n--- Teste de Extracao ---" << std::endl;
-    std::cout << "Extraindo elementos em ordem:" << std::endl;
-    while (!heap.isEmpty()) {
-        int min = heap.extractMin();
-        std::cout << "Extraido: " << min << std::endl;
-    }
-    std::cout << "\nHeap apos todas as extracoes:" << std::endl;
-    printHeapStatus(heap);
+    // 2. Inicialização do Sistema
+    Rede rede(num_armazens, max_transporte, custo_remocao);
+    Escalonador escalonador(max_eventos, num_pacotes, latencia_transporte, intervalo_transportes, &rede);
 
-    // 4. Teste de exceção de estouro (overflow)
-    std::cout << "\n--- Teste de Excecao de Overflow ---" << std::endl;
-    try {
-        std::cout << "Enchendo o heap ate a capacidade maxima..." << std::endl;
-        for (int i = 0; i < 11; ++i) {
-            heap.insert(i * 5);
-            std::cout << "Inserido: " << i * 5 << ". Tamanho: " << heap.getSize() << std::endl;
-        }
-    } catch (const std::overflow_error& e) {
-        std::cerr << "ERRO CAPTURADO (esperado): " << e.what() << std::endl;
+    // 3. Configuração da Rede
+    std::cout << "--- Configurando a Rede de Armazens ---\n";
+    for (int i = 0; i < num_armazens; ++i) {
+        rede.addArmazem(i);
     }
-    std::cout << "----------------------------------------" << std::endl;
+    rede.addConexao(0, 1);
+    rede.addConexao(1, 2);
+    rede.addConexao(1, 3);
+    std::cout << "Rede criada com " << num_armazens << " armazens.\n\n";
 
-    // 5. Teste de exceção de esvaziamento (underflow)
-    std::cout << "\n--- Teste de Excecao de Underflow ---" << std::endl;
-    std::cout << "Esvaziando o heap..." << std::endl;
-    while (!heap.isEmpty()) {
-        heap.extractMin();
-    }
-    std::cout << "Heap esvaziado." << std::endl;
+    // 4. Agendamento de Postagens e Transportes
+    std::cout << "--- Agendando Eventos Iniciais ---\n";
     
-    try {
-        std::cout << "Tentando extrair de um heap vazio..." << std::endl;
-        heap.extractMin();
-    } catch (const std::out_of_range& e) {
-        std::cerr << "ERRO CAPTURADO (esperado): " << e.what() << std::endl;
+    // Pacotes
+    Pacote* p1 = new Pacote(10, 1101, 0, 2, 0); // De 0 para 2
+    Pacote* p2 = new Pacote(15, 1102, 3, 0, 1); // De 1 para 3
+    Pacote* p3 = new Pacote(20, 1103, 2, 3, 2); // De 3 para 0
+    
+    // Agendamento de postagens
+    escalonador.agendar<EventoPostagem>(p1, p1->getOrigem(), p1->getDestinoFinal(), 0, p1->getHoraPostagem());
+    escalonador.agendar<EventoPostagem>(p2, p2->getOrigem(), p2->getDestinoFinal(), 0, p2->getHoraPostagem());
+    escalonador.agendar<EventoPostagem>(p3, p3->getOrigem(), p3->getDestinoFinal(), 0, p3->getHoraPostagem());
+
+    // Agendamento do PRIMEIRO evento de transporte global, que se auto-propaga
+    std::cout << "Agendando o primeiro evento de transporte global...\n";
+    escalonador.agendar<EventoAcionarTransporte>(nullptr, 0, 0, 0, intervalo_transportes);
+    
+    std::cout << num_pacotes << " pacotes postados e ciclo de transportes iniciado.\n\n";
+
+    // 5. Loop Principal da Simulação
+    std::cout << "--- Iniciando a Simulacao ---\n\n";
+    while (!escalonador.vazio()) {
+        escalonador.simularProximo();
     }
 
-    std::cout << "\n--- Testes Concluidos ---" << std::endl;
+    std::cout << "\n--- Simulacao Concluida ---\n";
 
     return 0;
 }
