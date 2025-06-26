@@ -11,7 +11,7 @@ CXXFLAGS = -I$(INCLUDE_DIR) -std=c++11 -Wall -Wextra
 OBJECTS = $(OBJ_DIR)/pacote.o $(OBJ_DIR)/armazem.o $(OBJ_DIR)/rede.o $(OBJ_DIR)/main.o $(OBJ_DIR)/escalonador.o $(OBJ_DIR)/evento.o
 
 # Nome do executável final
-EXECUTABLE = $(BIN_DIR)/tp2
+EXECUTABLE = $(BIN_DIR)/tp2.out
 
 # Regra padrão
 all: $(EXECUTABLE)
