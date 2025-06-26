@@ -1,23 +1,27 @@
 #include "armazem.hpp"
 #include "escalonador.hpp"
-#include "evento.hpp"      
+#include "evento.hpp"
+#include "estatisticas.hpp" // Inclui o novo cabeçalho
 #include <stdexcept>
 
-// ... (Construtor, Destrutor, find... e métodos de adicionar/remover pacotes permanecem iguais)
 Armazem::Armazem(int id_armazem, int custo_remocao, Escalonador* esc) : id(id_armazem), custoRemocao(custo_remocao), escalonador(esc), secoes(true), pilhaAuxiliar(false) { if (!escalonador) throw std::invalid_argument("Ponteiro do escalonador nao pode ser nulo no Armazem"); }
 Armazem::~Armazem() { }
-// CORREÇÃO: Alterado de addToTail para addOrdered
-Secao* Armazem::findOrCreateSecao(int id_secao) { 
-    Secao* secao = findSecao(id_secao); 
-    if (secao) return secao; 
-    
-    Secao* nova_secao = new Secao(id_secao); 
-    secoes.addOrdered(nova_secao); // <-- AQUI ESTÁ A CORREÇÃO
-    return nova_secao; 
-}
+Secao* Armazem::findOrCreateSecao(int id_secao) { Secao* secao = findSecao(id_secao); if (secao) return secao; Secao* nova_secao = new Secao(id_secao); secoes.addToTail(nova_secao); return nova_secao; }
 Secao* Armazem::findSecao(int id_secao) const { for (int i = 0; i < secoes.getSize(); ++i) { Secao* secao_atual = secoes.readIndex(i); if (secao_atual->id == id_secao) return secao_atual; } return nullptr; }
 void Armazem::addSecao(int id_secao) { findOrCreateSecao(id_secao); }
-void Armazem::adicionarPacote(Pacote* pacote, int id_secao_alvo) { pacote->setArmazemAtual(this->id); pacote->setEstado(EstadoPacote::armazenado); Secao* secao = findOrCreateSecao(id_secao_alvo); pacote->setSecaoAtual(id_secao_alvo); secao->pilha.push(pacote); }
+
+// CORREÇÃO: Contador de armazenamentos movido para cá.
+void Armazem::adicionarPacote(Pacote* pacote, int id_secao_alvo) {
+    pacote->setArmazemAtual(this->id);
+    pacote->setEstado(EstadoPacote::armazenado);
+    Secao* secao = findOrCreateSecao(id_secao_alvo);
+    pacote->setSecaoAtual(id_secao_alvo);
+    secao->pilha.push(pacote);
+    
+    // Qualquer pacote adicionado a uma seção conta como um armazenamento.
+    Estatisticas::instancia().incrementarArmazenamentos();
+}
+
 Pacote* Armazem::removerPacote(int id_secao) { Secao* secao = findSecao(id_secao); if (secao) { if (secao->pilha.isEmpty()) return nullptr; return secao->pilha.pop(); } throw std::out_of_range("ID de secao nao encontrado neste armazem"); }
 
 
@@ -30,6 +34,8 @@ int Armazem::realocarSecao(int id_secao, int horaInicial) {
         Pacote* pacote = secao->pilha.pop();
         pilhaAuxiliar.push(pacote);
         int horaAgendada = horaInicial + (i * this->custoRemocao);
+
+        Estatisticas::instancia().incrementarRemocoes(); // Esta chamada já funcionava.
 
         Evento::printHora(horaAgendada);
         std::cout << " pacote ";
@@ -45,6 +51,7 @@ int Armazem::realocarSecao(int id_secao, int horaInicial) {
     return horaInicial + ((i-1) * this->custoRemocao);
 }
 
+// CORREÇÃO: Contadores de envio e rearmazenamento movidos para cá.
 void Armazem::encaminhaPilhaAuxiliar(int horaAtual) {
     if (!escalonador) return;
     
@@ -52,6 +59,7 @@ void Armazem::encaminhaPilhaAuxiliar(int horaAtual) {
     if (!rede) return;
     int capacidadeTransporte = rede->getMaxTransporte();
 
+    // Loop para pacotes que serão enviados
     for (int i = 0; i < capacidadeTransporte && !pilhaAuxiliar.isEmpty(); ++i) {
         Pacote* pacote = pilhaAuxiliar.pop(); 
         if(pacote){
@@ -59,6 +67,7 @@ void Armazem::encaminhaPilhaAuxiliar(int horaAtual) {
         }
     }
 
+    // Loop para pacotes que excedem a capacidade e serão rearmazenados
     while (!pilhaAuxiliar.isEmpty()) {
         Pacote* pacote = pilhaAuxiliar.pop(); 
         if (pacote) {
@@ -67,7 +76,6 @@ void Armazem::encaminhaPilhaAuxiliar(int horaAtual) {
     }
 }
 
-// MUDANÇA: Lógica de `encaminharPacotes` agora está aqui e processa uma única seção
 void Armazem::processarEncaminhamentoSecao(int id_secao, int horaAtual) {
     if (!escalonador) return;
     Secao* secao = findSecao(id_secao);
@@ -77,37 +85,20 @@ void Armazem::processarEncaminhamentoSecao(int id_secao, int horaAtual) {
     }
 }
 
-// MUDANÇA: Novo método para encontrar a próxima seção a ser processada
 int Armazem::findProximaSecaoNaoVazia(int idSecaoAnterior) const {
     bool encontrouAnterior = (idSecaoAnterior == -1);
     for (int i = 0; i < secoes.getSize(); ++i) {
         Secao* secao_atual = secoes.readIndex(i);
         if (secao_atual) {
             if (encontrouAnterior && !secao_atual->pilha.isEmpty()) {
-                return secao_atual->id; // Retorna o ID da primeira seção não-vazia encontrada
+                return secao_atual->id;
             }
             if (secao_atual->id == idSecaoAnterior) {
                 encontrouAnterior = true;
             }
         }
     }
-    return -1; // Nenhuma outra seção não-vazia encontrada
-}
-
-// NOVO: Imprime os IDs de todas as seções deste armazém
-void Armazem::imprimirSecoes() const {
-    std::cout << "Secoes do Armazem " << this->id << ": ";
-    if (secoes.isEmpty()) {
-        std::cout << "[vazio]";
-    } else {
-        for (int i = 0; i < secoes.getSize(); ++i) {
-            Secao* secao = secoes.readIndex(i);
-            if (secao) {
-                std::cout << secao->id << " ";
-            }
-        }
-    }
-    std::cout << std::endl;
+    return -1;
 }
 
 bool Armazem::secoesVazias() const { for (int i = 0; i < secoes.getSize(); ++i) { Secao* secao_atual = secoes.readIndex(i); if (secao_atual && !secao_atual->pilha.isEmpty()) return false; } return true; }
