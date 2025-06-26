@@ -1,12 +1,13 @@
 #include "pacote.hpp"
 
-// Construtor atualizado
+// Construtor com a lista de inicialização na ordem correta
 Pacote::Pacote(int hora_postagem, int id_entrada, int id_origem, int id_destino_final, int id_sequencial) : 
-    horaPostagem(hora_postagem),
+    // CORREÇÃO: A ordem agora corresponde à declaração em pacote.hpp
+    idSequencial(id_sequencial),
     idEntrada(id_entrada), 
+    horaPostagem(hora_postagem),
     idOrigem(id_origem),
     idDestinoFinal(id_destino_final),
-    idSequencial(id_sequencial),
     idDestinoAtual(id_origem),
     idArmazemAtual(id_origem),
     idSecaoAtual(0),

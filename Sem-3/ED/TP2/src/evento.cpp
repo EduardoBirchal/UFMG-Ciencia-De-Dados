@@ -92,20 +92,44 @@ void EventoAcionarTransporte::simular() {
     Rede* rede = escalonador->getRede();
     if (!rede) return;
 
-    bool algumArmazemNaoVazio = false;
-    for (int i = 0; i < rede->getNumArmazens(); ++i) {
+    int numArmazensRede = rede->getNumArmazens();
+    // 1. Coleta armazéns que não estão vazios usando um array dinâmico.
+    Armazem** armazensParaProcessar = new Armazem*[numArmazensRede];
+    int count = 0;
+    for (int i = 0; i < numArmazensRede; ++i) {
         Armazem* armazem = rede->getArmazemPeloIndice(i);
         if (armazem && !armazem->secoesVazias()) {
-            algumArmazemNaoVazio = true;
-            // MUDANÇA: Agenda com prioridade ARMAZEM
-            escalonador->agendar<EventoAcionarArmazem>(nullptr, 0, armazem->getID(), 0, horaAgendada, Prioridade::ARMAZEM);
+            armazensParaProcessar[count++] = armazem;
         }
     }
-    
-    if (algumArmazemNaoVazio) {
+
+    // 2. Se houver armazéns a processar, ordena-os por ID usando Insertion Sort.
+    if (count > 0) {
+        // Insertion Sort
+        for (int i = 1; i < count; i++) {
+            Armazem* chave = armazensParaProcessar[i];
+            int j = i - 1;
+            // Move os elementos que são maiores que a chave uma posição para frente
+            while (j >= 0 && armazensParaProcessar[j]->getID() > chave->getID()) {
+                armazensParaProcessar[j + 1] = armazensParaProcessar[j];
+                j = j - 1;
+            }
+            armazensParaProcessar[j + 1] = chave;
+        }
+
+        // 3. Agenda um evento para cada armazém, agora em ordem
+        for (int i = 0; i < count; i++) {
+            Armazem* armazem = armazensParaProcessar[i];
+            escalonador->agendar<EventoAcionarArmazem>(nullptr, 0, armazem->getID(), 0, horaAgendada, Prioridade::ARMAZEM);
+        }
+
+        // 4. Agenda o próximo ciclo de transporte
         int proximaHora = this->horaAgendada + escalonador->getIntervaloTransportes();
         escalonador->agendar<EventoAcionarTransporte>(nullptr, 0, 0, 0, proximaHora, Prioridade::NORMAL);
     }
+    
+    // 5. Liberta a memória do array dinâmico
+    delete[] armazensParaProcessar;
 }
 
 // --- EventoAcionarArmazem ---
