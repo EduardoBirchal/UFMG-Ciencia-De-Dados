@@ -2,9 +2,9 @@
 #define CONTROLADOR_HPP
 
 #include "avlTree.hpp"
-#include "Pacote.hpp"
-#include "Cliente.hpp"
-#include "Evento.hpp"
+#include "pacote.hpp"
+#include "cliente.hpp"
+#include "evento.hpp"
 #include <string>
 
 /**

@@ -14,10 +14,10 @@ CXXFLAGS = -I$(INCLUDE_DIR) -std=c++11 -Wall -Wextra -g
 # Lista de todos os nomes de arquivos fonte .cpp.
 # Não é necessário incluir o caminho 'src/' aqui.
 SOURCES = main.cpp \
-          Controlador.cpp \
-          Evento.cpp \
-          Cliente.cpp \
-          Pacote.cpp
+          controlador.cpp \
+          evento.cpp \
+          cliente.cpp \
+          pacote.cpp
 
 # Gera a lista de arquivos objeto (.o) a partir dos fontes, colocando-os no OBJ_DIR.
 # Não é necessário modificar esta linha.
@@ -50,11 +50,11 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)
 # Isso garante que um arquivo .cpp seja recompilado se um de seus headers mudar.
 # É crucial para a correção do processo de compilação.
 
-$(OBJ_DIR)/main.o: $(SRC_DIR)/main.cpp $(INCLUDE_DIR)/Controlador.hpp
-$(OBJ_DIR)/Controlador.o: $(SRC_DIR)/Controlador.cpp $(INCLUDE_DIR)/Controlador.hpp $(INCLUDE_DIR)/Evento.hpp $(INCLUDE_DIR)/Pacote.hpp $(INCLUDE_DIR)/Cliente.hpp $(INCLUDE_DIR)/avlTree.hpp
-$(OBJ_DIR)/Evento.o: $(SRC_DIR)/Evento.cpp $(INCLUDE_DIR)/Evento.hpp
-$(OBJ_DIR)/Cliente.o: $(SRC_DIR)/Cliente.cpp $(INCLUDE_DIR)/Cliente.hpp $(INCLUDE_DIR)/Pacote.hpp $(INCLUDE_DIR)/linkedList.hpp
-$(OBJ_DIR)/Pacote.o: $(SRC_DIR)/Pacote.cpp $(INCLUDE_DIR)/Pacote.hpp $(INCLUDE_DIR)/Evento.hpp $(INCLUDE_DIR)/linkedList.hpp
+$(OBJ_DIR)/main.o: $(SRC_DIR)/main.cpp $(INCLUDE_DIR)/controlador.hpp
+$(OBJ_DIR)/controlador.o: $(SRC_DIR)/controlador.cpp $(INCLUDE_DIR)/controlador.hpp $(INCLUDE_DIR)/evento.hpp $(INCLUDE_DIR)/pacote.hpp $(INCLUDE_DIR)/cliente.hpp $(INCLUDE_DIR)/avlTree.hpp
+$(OBJ_DIR)/evento.o: $(SRC_DIR)/evento.cpp $(INCLUDE_DIR)/evento.hpp
+$(OBJ_DIR)/cliente.o: $(SRC_DIR)/cliente.cpp $(INCLUDE_DIR)/cliente.hpp $(INCLUDE_DIR)/pacote.hpp $(INCLUDE_DIR)/linkedList.hpp
+$(OBJ_DIR)/pacote.o: $(SRC_DIR)/pacote.cpp $(INCLUDE_DIR)/pacote.hpp $(INCLUDE_DIR)/evento.hpp $(INCLUDE_DIR)/linkedList.hpp
 
 # --- Regras Auxiliares ---
 

@@ -2,7 +2,7 @@
 #define PACOTE_HPP
 
 #include "linkedList.hpp" // Para usar a lista encadeada
-#include "Evento.hpp"       // Para usar a classe Evento
+#include "evento.hpp"       // Para usar a classe Evento
 
 /**
  * @class Pacote

@@ -3,7 +3,7 @@
 
 #include <string>
 #include "linkedList.hpp"
-#include "Pacote.hpp"
+#include "pacote.hpp"
 
 class Pacote; // Declaração avançada para o ponteiro
 

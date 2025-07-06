@@ -1,4 +1,4 @@
-#include "Controlador.hpp"
+#include "controlador.hpp"
 #include <sstream>   // Para usar std::stringstream
 #include <iostream>  // Para usar std::cout
 #include <iomanip>   // Para usar std::setw e std::setfill

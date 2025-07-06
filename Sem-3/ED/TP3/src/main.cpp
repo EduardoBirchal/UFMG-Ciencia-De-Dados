@@ -2,7 +2,7 @@
 #include <fstream>
 #include <string>
 #include <stdexcept>
-#include "Controlador.hpp"
+#include "controlador.hpp"
 
 /**
  * @brief Função principal que lê queries de um arquivo e as executa.
