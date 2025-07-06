@@ -39,7 +39,7 @@ void Controlador::executarQuery(const std::string& query) {
         Cliente* cliente = getOrCreateCliente(nomeCliente);
 
         // Imprime o cabeçalho da consulta usando a função de formatação
-        std::cout << formatarInt(hora, 7) << " CL " << nomeCliente << std::endl;
+        std::cout << formatarInt(hora, 6) << " CL " << nomeCliente << std::endl;
         cliente->printInformacao();
 
     } else if (tipoQuery == "PC") {
@@ -49,7 +49,7 @@ void Controlador::executarQuery(const std::string& query) {
         Pacote* pacote = getOrCreatePacote(idPacote);
 
         // Imprime o cabeçalho da consulta usando a função de formatação
-        std::cout << formatarInt(hora, 7) << " PC " << formatarInt(idPacote, 3) << std::endl;
+        std::cout << formatarInt(hora, 6) << " PC " << formatarInt(idPacote, 3) << std::endl;
         pacote->printInformacao();
     }
 }
