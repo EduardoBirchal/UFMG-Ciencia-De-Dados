@@ -36,29 +36,21 @@ void Controlador::executarQuery(const std::string& query) {
         // Se for uma consulta de cliente, lê o nome e imprime as informações
         std::string nomeCliente;
         ss >> nomeCliente;
-        Cliente* cliente = acharCliente(nomeCliente);
+        Cliente* cliente = getOrCreateCliente(nomeCliente);
 
-        if (cliente != nullptr) {
-            // Imprime o cabeçalho da consulta usando a função de formatação
-            std::cout << formatarInt(hora, 7) << " CL " << nomeCliente << std::endl;
-            cliente->printInformacao();
-        } else {
-            std::cout << "ERRO: CLIENTE " << nomeCliente << " NAO ENCONTRADO" << std::endl;
-        }
+        // Imprime o cabeçalho da consulta usando a função de formatação
+        std::cout << formatarInt(hora, 7) << " CL " << nomeCliente << std::endl;
+        cliente->printInformacao();
 
     } else if (tipoQuery == "PC") {
         // Se for uma consulta de pacote, lê o ID e imprime as informações
         int idPacote;
         ss >> idPacote;
-        Pacote* pacote = acharPacote(idPacote);
+        Pacote* pacote = getOrCreatePacote(idPacote);
 
-        if (pacote != nullptr) {
-            // Imprime o cabeçalho da consulta usando a função de formatação
-            std::cout << formatarInt(hora, 7) << " PC " << formatarInt(idPacote, 3) << std::endl;
-            pacote->printInformacao();
-        } else {
-            std::cout << "ERRO: PACOTE " << idPacote << " NAO ENCONTRADO" << std::endl;
-        }
+        // Imprime o cabeçalho da consulta usando a função de formatação
+        std::cout << formatarInt(hora, 7) << " PC " << formatarInt(idPacote, 3) << std::endl;
+        pacote->printInformacao();
     }
 }
 

@@ -33,16 +33,13 @@ all: $(EXECUTABLE)
 
 # Regra para linkar os objetos e criar o executável final.
 $(EXECUTABLE): $(OBJECTS) | $(BIN_DIR)
-	@echo "Linkando para criar o executável..."
 	$(CXX) $(CXXFLAGS) -o $@ $(OBJECTS)
-	@echo "Executável '$(EXECUTABLE)' criado com sucesso."
 
 # --- Regra de Compilação Genérica ---
 
 # Regra para compilar qualquer arquivo .cpp da pasta src em um .o na pasta obj.
 # O make encontrará o fonte correspondente em $(SRC_DIR).
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)
-	@echo "Compilando $<..."
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # --- Regras de Dependência ---
@@ -64,9 +61,7 @@ $(OBJ_DIR) $(BIN_DIR):
 
 # Limpa os arquivos compilados e o executável.
 clean:
-	@echo "Limpando arquivos compilados..."
 	rm -rf $(OBJ_DIR) $(BIN_DIR)
-	@echo "Limpeza concluída."
 
 # Declara alvos que não são nomes de arquivos.
 .PHONY: all clean

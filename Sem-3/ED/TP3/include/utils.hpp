@@ -39,4 +39,23 @@ inline std::string formatarInt(int n, int numDigitos) {
     return ss.str();
 }
 
+/**
+ * @struct parOrdenado
+ * @brief Estrutura genérica para armazenar um par de valores de tipos quaisquer.
+ *
+ * @tparam T1 O tipo do primeiro elemento.
+ * @tparam T2 O tipo do segundo elemento.
+ */
+template <typename T1, typename T2>
+struct parOrdenado {
+    T1 primeiro;
+    T2 segundo;
+
+    // Construtor padrão
+    parOrdenado() = default;
+
+    // Construtor para inicializar os membros
+    parOrdenado(const T1& p, const T2& s) : primeiro(p), segundo(s) {}
+};
+
 #endif // UTILS_HPP
