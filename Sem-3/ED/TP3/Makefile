@@ -24,8 +24,7 @@ SOURCES = main.cpp \
 OBJECTS = $(patsubst %.cpp, $(OBJ_DIR)/%.o, $(SOURCES))
 
 # Nome do executável final
-EXECUTABLE = $(BIN_DIR)/tp3.out
-
+EXECUTABLE = $(BIN_DIR)/tp3
 # --- Regras Principais ---
 
 # Regra padrão: é executada quando 'make' é chamado sem argumentos.

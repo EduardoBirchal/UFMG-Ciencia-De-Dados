@@ -18,12 +18,12 @@ private:
     linkedList<Pacote*> pacotesReceber;
 
     /**
-     * @brief Função auxiliar para Radix Sort: encontra o maior valor de chave.
+     * @brief Função auxiliar para Radix Sort: encontra o maior valor de chave
      */
     static long long getMax(parOrdenado<Pacote*, long long> arr[], int n);
 
     /**
-     * @brief Função auxiliar para Radix Sort: usa Counting Sort para ordenar por dígito.
+     * @brief Função auxiliar para Radix Sort: usa Counting Sort para ordenar por dígito
      */
     static void countingSort(parOrdenado<Pacote*, long long> arr[], int n, long long exp);
 
@@ -43,23 +43,23 @@ public:
     bool operator==(const Cliente& outro) const;
 
     /**
-     * @brief Imprime informações sobre os pacotes do cliente.
-     * Imprime o primeiro e o último evento de cada pacote enviado e recebido.
+     * @brief Imprime informações sobre os pacotes do cliente
+     * Imprime o primeiro e o último evento de cada pacote enviado e recebido
      */
     void printInformacao() const;
 
     /**
-     * @brief Calcula uma chave única para um par pacote-evento.
-     * @param pacote Ponteiro para o pacote.
-     * @param evento O evento.
-     * @return Um número de chave (long long).
+     * @brief Calcula uma chave única para um par pacote-evento
+     * @param pacote Ponteiro para o pacote
+     * @param evento O evento
+     * @return Um número de chave (long long)
      */
     static long long calcularChave(Pacote* pacote, const Evento& evento);
 
     /**
-    * @brief Ordena um array de pares (pacote, chave) usando Radix Sort com base na chave.
-    * @param arr O array a ser ordenado.
-    * @param n O tamanho do array.
+    * @brief Ordena um array de pares (pacote, chave) usando Radix Sort com base na chave
+    * @param arr O array a ser ordenado
+    * @param n O tamanho do array
     */
     static void radixSort(parOrdenado<Pacote*, long long> arr[], int n);
 

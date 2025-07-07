@@ -5,19 +5,19 @@
 #include "utils.hpp"
 
 /**
- * @brief Construtor do Controlador.
+ * @brief Construtor do Controlador
  */
 Controlador::Controlador() : pacotes(true), clientes(true) {
 }
 
 /**
- * @brief Destrutor do Controlador.
+ * @brief Destrutor do Controlador
  */
 Controlador::~Controlador() {
 }
 
 /**
- * @brief Processa uma query a partir de uma string.
+ * @brief Processa uma query a partir de uma string
  */
 void Controlador::executarQuery(const std::string& query) {
     std::stringstream ss(query);
@@ -55,7 +55,7 @@ void Controlador::executarQuery(const std::string& query) {
 }
 
 /**
- * @brief Processa um evento e atualiza o estado do sistema.
+ * @brief Processa um evento e atualiza o estado do sistema
  */
 void Controlador::executarEvento(const Evento& evento) {
     Pacote* pacote = getOrCreatePacote(evento.getIdPacote());
@@ -70,14 +70,14 @@ void Controlador::executarEvento(const Evento& evento) {
 }
 
 /**
- * @brief Adiciona um ponteiro de Pacote à árvore de pacotes.
+ * @brief Adiciona um ponteiro de Pacote à árvore de pacotes
  */
 void Controlador::adicionarPacote(Pacote* pacote) {
     this->pacotes.insert(pacote);
 }
 
 /**
- * @brief Encontra um Pacote pelo ID.
+ * @brief Encontra um Pacote pelo ID
  */
 Pacote* Controlador::acharPacote(int id) {
     Pacote dummy(id);
@@ -85,14 +85,14 @@ Pacote* Controlador::acharPacote(int id) {
 }
 
 /**
- * @brief Adiciona um ponteiro de Cliente à árvore de clientes.
+ * @brief Adiciona um ponteiro de Cliente à árvore de clientes
  */
 void Controlador::adicionarCliente(Cliente* cliente) {
     this->clientes.insert(cliente);
 }
 
 /**
- * @brief Encontra um Cliente pelo nome.
+ * @brief Encontra um Cliente pelo nome
  */
 Cliente* Controlador::acharCliente(const std::string& nome) {
     Cliente dummy(nome);
@@ -100,7 +100,7 @@ Cliente* Controlador::acharCliente(const std::string& nome) {
 }
 
 /**
- * @brief Busca um pacote pelo ID. Se não existir, cria um novo.
+ * @brief Busca um pacote pelo ID. Se não existir, cria um novo
  */
 Pacote* Controlador::getOrCreatePacote(int id) {
     Pacote* pacote = acharPacote(id);
@@ -112,7 +112,7 @@ Pacote* Controlador::getOrCreatePacote(int id) {
 }
 
 /**
- * @brief Busca um cliente pelo nome. Se não existir, cria um novo.
+ * @brief Busca um cliente pelo nome. Se não existir, cria um novo
  */
 Cliente* Controlador::getOrCreateCliente(const std::string& nome) {
     Cliente* cliente = acharCliente(nome);

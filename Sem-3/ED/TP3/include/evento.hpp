@@ -34,12 +34,12 @@ private:
     int secaoDestino;
 
     /**
-     * @brief Converte um enum TipoEvento para sua representação em string.
-     * @param tipo O tipo de evento.
-     * @return A string correspondente (ex: "RG", "AR").
+     * @brief Converte um enum TipoEvento para sua representação em string
+     * @param tipo O tipo de evento
+     * @return A string correspondente (ex: "RG", "AR")
      */
     static std::string tipoPraString(TipoEvento tipo);
-    
+
 
 public:
     /**
@@ -68,8 +68,8 @@ public:
     static Evento stringPraEvento(const std::string& linha);
 
     /**
-     * @brief Converte os dados do evento para uma string formatada.
-     * @return Uma string representando o evento no formato de entrada.
+     * @brief Converte os dados do evento para uma string formatada
+     * @return Uma string representando o evento no formato de entrada
      */
     std::string eventoPraString() const;
 

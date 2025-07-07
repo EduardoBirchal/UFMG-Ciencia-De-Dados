@@ -37,7 +37,7 @@ Evento::TipoEvento Evento::stringPraTipo(const std::string& str) {
 
 /**
  * @brief Cria um objeto Evento a partir de uma string formatada
- * @param linha A string contendo os dados do evento.
+ * @param linha A string contendo os dados do evento
  * @return Um objeto Evento preenchido com os dados da string
  */
 Evento Evento::stringPraEvento(const std::string& linha) {
@@ -98,7 +98,7 @@ Evento Evento::stringPraEvento(const std::string& linha) {
 // --- Funções de Conversão para String ---
 
 /**
- * @brief Converte um enum TipoEvento para sua representação em string.
+ * @brief Converte um enum TipoEvento para sua representação em string
  */
 std::string Evento::tipoPraString(TipoEvento tipo) {
     switch (tipo) {
@@ -113,7 +113,7 @@ std::string Evento::tipoPraString(TipoEvento tipo) {
 }
 
 /**
- * @brief Converte os dados do evento para uma string formatada.
+ * @brief Converte os dados do evento para uma string formatada
  */
 std::string Evento::eventoPraString() const {
     std::stringstream ss;
@@ -145,7 +145,7 @@ std::string Evento::eventoPraString() const {
 }
 
 
-// --- Implementação dos Getters ---
+// --- Getters ---
 
 int Evento::getHora() const { return this->hora; }
 Evento::TipoEvento Evento::getTipo() const { return this->tipo; }
@@ -156,7 +156,7 @@ int Evento::getArmazemOrigem() const { return this->armazemOrigem; }
 int Evento::getArmazemDestino() const { return this->armazemDestino; }
 int Evento::getSecaoDestino() const { return this->secaoDestino; }
 
-// --- Implementação dos Setters ---
+// --- Setters ---
 
 void Evento::setHora(int hora) { this->hora = hora; }
 void Evento::setTipo(Evento::TipoEvento tipo) { this->tipo = tipo; }

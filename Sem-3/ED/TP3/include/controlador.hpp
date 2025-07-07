@@ -9,7 +9,7 @@
 
 /**
  * @class Controlador
- * @brief Gerencia as estruturas de dados e a lógica de eventos do sistema.
+ * @brief Gerencia as estruturas de dados e a lógica de eventos do sistema
  */
 class Controlador {
 private:
@@ -28,14 +28,14 @@ public:
     ~Controlador();
 
     /**
-     * @brief Processa uma query (evento ou consulta) a partir de uma string.
-     * @param query A string da query a ser executada.
+     * @brief Processa uma query a partir de uma string
+     * @param query A string da query a ser executada
      */
     void executarQuery(const std::string& query);
 
     /**
-     * @brief Processa um evento, aplicando sua lógica ao estado do sistema.
-     * @param evento O evento a ser executado.
+     * @brief Adiciona um evento ao pacote relevante, e o pacote aos clientes (se necessário)
+     * @param evento O evento a ser executado
      */
     void executarEvento(const Evento& evento);
 

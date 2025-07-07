@@ -25,21 +25,20 @@ bool Pacote::operator==(const Pacote& outro) const {
 }
 
 /**
- * @brief Imprime as informações do pacote.
+ * @brief Imprime as informações do pacote
  */
 void Pacote::printInformacao() const {
     int numEventos = this->historicoEventos.getSize();
     std::cout << numEventos << std::endl;
 
     for (int i = 0; i < numEventos; ++i) {
-        // Usamos const_cast porque readIndex não é const, mas a lógica é segura.
-        // O ideal seria ter uma versão const de readIndex.
+        // Usa const_cast porque readIndex não é const, mas a lógica é segura
         Evento& evento = const_cast<linkedList<Evento>&>(this->historicoEventos).readIndex(i);
         std::cout << evento.eventoPraString() << std::endl;
     }
 }
 
-// --- Implementação dos Getters ---
+// --- Getters ---
 
 int Pacote::getId() const {
     return this->id;
@@ -57,7 +56,7 @@ linkedList<Evento>& Pacote::getHistoricoEventos() {
     return this->historicoEventos;
 }
 
-// --- Implementação dos Setters ---
+// --- Setters ---
 
 void Pacote::setId(int id) {
     this->id = id;

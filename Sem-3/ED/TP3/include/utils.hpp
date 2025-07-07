@@ -7,9 +7,9 @@
 
 /**
  * @struct NodeDeleter
- * @brief Helper para deleção condicional de dados em nós de estruturas de dados.
+ * @brief Helper para deleção condicional de dados em nós de estruturas de dados
  * A especialização para ponteiros deleta o dado, enquanto a versão
- * genérica não faz nada para tipos de valor.
+ * genérica não faz nada para tipos de valor
  */
 // Template genérico para não-ponteiros
 template<typename T>
@@ -28,10 +28,10 @@ struct NodeDeleter<T*> {
 };
 
 /**
- * @brief Formata um número inteiro com um número específico de dígitos, preenchendo com zeros.
- * @param n O número a ser formatado.
- * @param numDigitos O número total de dígitos que a string deve ter.
- * @return A string formatada.
+ * @brief Formata um número inteiro com um número específico de dígitos, preenchendo com zeros
+ * @param n O número a ser formatado
+ * @param numDigitos O número total de dígitos que a string deve ter
+ * @return A string formatada
  */
 inline std::string formatarInt(int n, int numDigitos) {
     std::stringstream ss;
@@ -41,10 +41,10 @@ inline std::string formatarInt(int n, int numDigitos) {
 
 /**
  * @struct parOrdenado
- * @brief Estrutura genérica para armazenar um par de valores de tipos quaisquer.
+ * @brief Estrutura genérica para armazenar um par de valores de tipos arbitrários
  *
- * @tparam T1 O tipo do primeiro elemento.
- * @tparam T2 O tipo do segundo elemento.
+ * @tparam T1 O tipo do primeiro elemento
+ * @tparam T2 O tipo do segundo elemento
  */
 template <typename T1, typename T2>
 struct parOrdenado {

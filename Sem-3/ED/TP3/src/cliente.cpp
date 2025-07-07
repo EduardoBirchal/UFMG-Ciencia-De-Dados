@@ -27,7 +27,7 @@ bool Cliente::operator==(const Cliente& outro) const {
 // --- Lógica do Radix Sort ---
 
 /**
- * @brief Obtém o maior valor de chave no array.
+ * @brief Obtém o maior valor de chave no array
  */
 long long Cliente::getMax(parOrdenado<Pacote*, long long> arr[], int n) {
     if (n <= 0) return 0;
@@ -41,7 +41,7 @@ long long Cliente::getMax(parOrdenado<Pacote*, long long> arr[], int n) {
 }
 
 /**
- * @brief Realiza o Counting Sort para um dígito específico (exp).
+ * @brief Realiza o Counting Sort para um dígito específico (exp)
  */
 void Cliente::countingSort(parOrdenado<Pacote*, long long> arr[], int n, long long exp) {
     if (n <= 0) return;
@@ -75,7 +75,7 @@ void Cliente::countingSort(parOrdenado<Pacote*, long long> arr[], int n, long lo
 }
 
 /**
- * @brief Implementação do Radix Sort.
+ * @brief Implementação do Radix Sort
  */
 void Cliente::radixSort(parOrdenado<Pacote*, long long> arr[], int n) {
     if (n <= 0) return;
@@ -86,7 +86,7 @@ void Cliente::radixSort(parOrdenado<Pacote*, long long> arr[], int n) {
 }
 
 /**
- * @brief Imprime informações sobre os pacotes do cliente, ordenadas por chave.
+ * @brief Imprime informações sobre os pacotes do cliente, ordenadas por chave
  */
 void Cliente::printInformacao() const {
     int tamanhoEnviar = this->pacotesEnviar.getSize();
@@ -145,7 +145,7 @@ void Cliente::printInformacao() const {
 }
 
 /**
- * @brief Calcula uma chave única para um par pacote-evento.
+ * @brief Calcula uma chave única para um par pacote-evento
  */
 long long Cliente::calcularChave(Pacote* pacote, const Evento& evento) {
     if (pacote == nullptr) {
