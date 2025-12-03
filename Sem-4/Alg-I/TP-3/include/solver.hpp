@@ -7,7 +7,6 @@
 // classe que encapsula o problema
 class Solver {
 public:
-    // construtor
     Solver();
 
     // metodo principal para rodar o programa
@@ -28,14 +27,11 @@ private:
     std::vector<int> adj_left_to_right;
     std::vector<std::pair<int, int>> sos_dp;
 
-    // funcoes auxiliares (metodos privados)
-    // read_graph removido daqui (agora em utils)
+    // funcoes auxiliares
     void prepare_adjacencies();
     void update_if_maximal(int mask, int i);
     void build_sos_dp();
     void solve_left(int idx, int current_mask, int forbidden_in_right);
-    
-    // utilitarios de bits removidos daqui (agora em utils)
 };
 
 #endif

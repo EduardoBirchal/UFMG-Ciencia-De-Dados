@@ -1,4 +1,4 @@
-#include "solver.hpp"
+#include "../include/solver.hpp"
 
 int main() {
     Solver solver;

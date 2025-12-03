@@ -22,7 +22,7 @@ SOURCES = 	main.cpp \
 OBJECTS = $(patsubst %.cpp, $(OBJ_DIR)/%.o, $(SOURCES))
 
 # Nome do executável final
-EXECUTABLE = $(BIN_DIR)/tp3
+EXECUTABLE = tp3.out
 # --- Regras Principais ---
 
 # Regra padrão: é executada quando 'make' é chamado sem argumentos.
@@ -52,7 +52,7 @@ $(OBJ_DIR)/utils.o: $(SRC_DIR)/utils.cpp $(INCLUDE_DIR)/utils.hpp
 
 # Cria os diretórios se eles não existirem.
 $(OBJ_DIR) $(BIN_DIR):
-	mkdir -p $@
+	mkdir $@
 
 # Limpa os arquivos compilados e o executável.
 clean:

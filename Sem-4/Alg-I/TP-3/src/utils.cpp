@@ -1,14 +1,14 @@
-#include "utils.hpp"
+#include "../include/utils.hpp"
 #include <iostream>
 
 using namespace std;
 
-// implementacao de test_bit
+// testa se o bit i é 1
 bool test_bit(int mascara, int i) {
     return (mascara & (1 << i)) != 0;
 }
 
-// implementacao de count_bits
+// conta a quantidade de 1s
 int count_bits(int mascara) {
     int contador = 0;
     while (mascara > 0) {
@@ -18,7 +18,7 @@ int count_bits(int mascara) {
     return contador;
 }
 
-// implementacao de read_graph
+// le o input e gera o bitmask do grafo
 void read_graph(int& n, int& n_left, int& n_right, vector<long long>& adj) {
     int m;
     // se falhar a leitura, retorna
