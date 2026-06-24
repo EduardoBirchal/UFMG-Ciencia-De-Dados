@@ -9,4 +9,4 @@ Pelo terminal:
 Pelo VS Code: 
     - Tenha certeza de que o seu ambiente python tem as versões mais atuais de pandas, numpy, seaborn, e scikit-learn
     - Se a extensão de jupyter não estiver instalada, instale
-    - Abra o arquivo e, no menu superior, clique em "Run All"
+    - Abra o arquivo TP2-IA.ipynb e, no menu superior, clique em "Run All"
