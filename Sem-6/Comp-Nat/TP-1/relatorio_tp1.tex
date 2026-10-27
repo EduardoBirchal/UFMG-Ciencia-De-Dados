@@ -1,0 +1,204 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[brazil]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{subcaption}
+\usepackage{cite}
+
+\geometry{top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm}
+
+\title{\textbf{Trabalho Prático 1: Regressão Simbólica com Programação Genética}}
+\author{[Nome do Aluno -- Matrícula]\\
+\textit{Departamento de Ciência da Computação}\\
+\textit{Universidade Federal de Minas Gerais (UFMG)}}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+% [ORIENTAÇÃO: Resumo conciso de até 200 palavras descrevendo o objetivo do trabalho,
+% os métodos de programação genética implementados, os experimentos realizados sobre as bases
+% synth1, synth2 e concrete com 30 repetições, e as principais conclusões obtidas.]
+\end{abstract}
+
+\section{Introdução}
+% [ORIENTAÇÃO: Contextualize o problema de regressão simbólica e diferencie-o da regressão clássica.
+% Apresente a motivação para o uso de Programação Genética (PG).
+% Declare os objetivos do trabalho: investigar o impacto de hiperparâmetros (tamanho da população e gerações),
+% métodos de seleção (Torneio, Roleta Escalonada, epsilon-Lexicase), operadores de variação (crossover vs. mutação)
+% e elitismo, finalizando com a validação em bases sintéticas e reais.
+% Descreva a organização das seções seguintes do relatório.]
+
+\section{Implementação}
+% [ORIENTAÇÃO: Detalhe as decisões de engenharia e modelagem matemática do framework de PG.]
+
+\subsection{Representação dos Indivíduos e Inicialização}
+% [ORIENTAÇÃO: Descreva a árvore sintática baseada em nós, a restrição rígida de profundidade máxima igual a 7,
+% e a inicialização Ramped Half-and-Half (profundidades de 2 a 5 com método grow e full).]
+
+\subsection{Conjunto Primitivo e Terminais}
+% [ORIENTAÇÃO: Apresente as funções primitivas (+, -, *, divisão protegida, sin, cos, log protegido, exp protegido)
+% e justifique as proteções numéricas contra divisões por zero e overflow.
+% Descreva as variáveis terminais (X0 a XD-1) e as constantes efêmeras (ERCs) com perturbação gaussiana.]
+
+\subsection{Função de Fitness e Avaliação Vetorizada}
+% [ORIENTAÇÃO: Apresente a fórmula da Raiz do Erro Quadrático Médio (RMSE).
+% Explique como a avaliação foi vetorizada com NumPy sobre matrizes N x D.]
+
+\subsection{Operadores de Seleção}
+% [ORIENTAÇÃO: Descreva formalmente os três operadores de seleção:
+% 1. Torneio com k=2.
+% 2. Roleta com escalonamento linear (f_max - f_i + delta) para minimização.
+% 3. epsilon-Lexicase com limiar dinâmico baseado no Desvio Absoluto Mediano (MAD) por caso de teste.]
+
+\subsection{Operadores de Variação e Esquema Reprodutivo}
+% [ORIENTAÇÃO: Explique a seleção mutuamente exclusiva de operadores por vaga na nova população (pc, pm, cloning).
+% Detalhe o crossover de subárvore com rejeição por profundidade > 7 e a mutação por perturbação ou subárvore.
+% Explique o mecanismo de elitismo preservando o melhor indivíduo.]
+
+\section{Experimentos e Análise de Resultados}
+% [ORIENTAÇÃO: Detalhe o protocolo experimental: 30 sementes aleatórias por configuração,
+% divisões de treino e teste, e métricas coletadas.]
+
+\subsection{Impacto do Tamanho da População e Número de Gerações (Passo 1)}
+% [ORIENTAÇÃO: Analise o compromisso entre tamanho da população, número de gerações e custo computacional.
+% Discuta se configurações com mais gerações apresentaram overfitting ou bloat.]
+
+% Inserção da Tabela 1:
+% \input{results/tables/step1_summary.tex}
+
+% Inserção da Figura 1 (Convergência e Bloat no Passo 1):
+\begin{figure}[htbp]
+  \centering
+  \IfFileExists{results/plots/fig1_step1_convergence.png}{%
+    \includegraphics[width=0.85\textwidth]{results/plots/fig1_step1_convergence.png}%
+  }{%
+    \fbox{\parbox{0.8\textwidth}{\centering Placeholder: Inserir \texttt{results/plots/fig1_step1_convergence.png}}}%
+  }
+  \caption{Convergência do RMSE de treino e teste ao longo das gerações para diferentes tamanhos de população e gerações.}
+  \label{fig:step1_convergence}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \IfFileExists{results/plots/fig2_step1_bloat.png}{%
+    \includegraphics[width=0.85\textwidth]{results/plots/fig2_step1_bloat.png}%
+  }{%
+    \fbox{\parbox{0.8\textwidth}{\centering Placeholder: Inserir \texttt{results/plots/fig2_step1_bloat.png}}}%
+  }
+  \caption{Evolução do número médio de nós e profundidade média (análise de bloat) no Passo 1.}
+  \label{fig:step1_bloat}
+\end{figure}
+
+\subsection{Comparação dos Métodos de Seleção (Passo 2)}
+% [ORIENTAÇÃO: Compare Torneio (k=2), Roleta Escalonada e epsilon-Lexicase.
+% Discuta a pressão seletiva, a preservação da diversidade estrutural (árvores canônicas únicas)
+% e a capacidade de escapar de mínimos locais.]
+
+% Inserção da Tabela 2:
+% \input{results/tables/step2_summary.tex}
+
+% Inserção da Figura 2 (Convergência e Diversidade na Seleção):
+\begin{figure}[htbp]
+  \centering
+  \IfFileExists{results/plots/fig3_step2_selection_convergence.png}{%
+    \includegraphics[width=0.85\textwidth]{results/plots/fig3_step2_selection_convergence.png}%
+  }{%
+    \fbox{\parbox{0.8\textwidth}{\centering Placeholder: Inserir \texttt{results/plots/fig3_step2_selection_convergence.png}}}%
+  }
+  \caption{Comparação da convergência do melhor RMSE de treino entre Torneio, Roleta Escalonada e $\epsilon$-Lexicase.}
+  \label{fig:step2_selection}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \IfFileExists{results/plots/fig4_step2_diversity.png}{%
+    \includegraphics[width=0.85\textwidth]{results/plots/fig4_step2_diversity.png}%
+  }{%
+    \fbox{\parbox{0.8\textwidth}{\centering Placeholder: Inserir \texttt{results/plots/fig4_step2_diversity.png}}}%
+  }
+  \caption{Evolução da diversidade populacional (contagem de indivíduos sintaticamente únicos).}
+  \label{fig:step2_diversity}
+\end{figure}
+
+\subsection{Comparação dos Operadores de Variação (Passo 3)}
+% [ORIENTAÇÃO: Compare a configuração de alto crossover (pc=0.9, pm=0.05) com a de alta mutação (pc=0.6, pm=0.30).
+% Analise a taxa de sucesso do crossover (filhos melhores vs. piores que a média dos pais) e seu impacto no bloat.]
+
+% Inserção da Tabela 3:
+% \input{results/tables/step3_summary.tex}
+
+% Inserção da Figura 3 (Sucesso do Crossover):
+\begin{figure}[htbp]
+  \centering
+  \IfFileExists{results/plots/fig5_step3_operator_success.png}{%
+    \includegraphics[width=0.85\textwidth]{results/plots/fig5_step3_operator_success.png}%
+  }{%
+    \fbox{\parbox{0.8\textwidth}{\centering Placeholder: Inserir \texttt{results/plots/fig5_step3_operator_success.png}}}%
+  }
+  \caption{Taxas de sucesso do crossover (filhos melhores vs. piores que os pais) ao longo das gerações.}
+  \label{fig:step3_operators}
+\end{figure}
+
+\subsection{Análise do Impacto do Elitismo (Passo 4)}
+% [ORIENTAÇÃO: Compare a trajetória de convergência com e sem elitismo.
+% Destaque a perda temporária de soluções ótimas no regime sem elitismo e o efeito na estabilidade.]
+
+% Inserção da Tabela 4:
+% \input{results/tables/step4_summary.tex}
+
+% Inserção da Figura 4 (Comparação de Elitismo):
+\begin{figure}[htbp]
+  \centering
+  \IfFileExists{results/plots/fig6_step4_elitism_comparison.png}{%
+    \includegraphics[width=0.85\textwidth]{results/plots/fig6_step4_elitism_comparison.png}%
+  }{%
+    \fbox{\parbox{0.8\textwidth}{\centering Placeholder: Inserir \texttt{results/plots/fig6_step4_elitism_comparison.png}}}%
+  }
+  \caption{Impacto do mecanismo de elitismo na estabilidade e monotonia da convergência do melhor indivíduo.}
+  \label{fig:step4_elitism}
+\end{figure}
+
+\subsection{Validação Final nos Conjuntos synth2 e concrete (Passo 5)}
+% [ORIENTAÇÃO: Apresente o desempenho da melhor configuração global sobre as bases synth2 e concrete.
+% Compare o erro de treino e teste (gap de generalização) e analise a complexidade das expressões encontradas.]
+
+% Inserção da Tabela 5:
+% \input{results/tables/step5_summary.tex}
+
+% Inserção da Figura 5 (Validação Final e Paridade):
+\begin{figure}[htbp]
+  \centering
+  \IfFileExists{results/plots/fig7_step5_synth2_concrete_convergence.png}{%
+    \includegraphics[width=0.85\textwidth]{results/plots/fig7_step5_synth2_concrete_convergence.png}%
+  }{%
+    \fbox{\parbox{0.8\textwidth}{\centering Placeholder: Inserir \texttt{results/plots/fig7_step5_synth2_concrete_convergence.png}}}%
+  }
+  \caption{Convergência final do RMSE de treino e teste nas bases synth2 e concrete.}
+  \label{fig:step5_convergence}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \IfFileExists{results/plots/fig8_step5_generalization_scatter.png}{%
+    \includegraphics[width=0.85\textwidth]{results/plots/fig8_step5_generalization_scatter.png}%
+  }{%
+    \fbox{\parbox{0.8\textwidth}{\centering Placeholder: Inserir \texttt{results/plots/fig8_step5_generalization_scatter.png}}}%
+  }
+  \caption{Gráfico de paridade (valores previstos vs. valores reais) no conjunto de teste para o melhor modelo.}
+  \label{fig:step5_parity}
+\end{figure}
+
+\section{Conclusões}
+% [ORIENTAÇÃO: Sintetize as principais descobertas experimentais.
+% Indique quais operadores e parâmetros se mostraram mais robustos para regressão simbólica.
+% Discuta limitações encontradas (ex.: bloat, tempo de avaliação em bases maiores) e proponha melhorias futuras.]
+
+\bibliographystyle{plain}
+\bibliography{referencias}
+\end{document}
